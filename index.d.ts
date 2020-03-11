@@ -5,6 +5,7 @@ interface App {
 
 interface Window {
   App: App;
+  Countly: any;
 }
 
 declare var App: App;
