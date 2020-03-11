@@ -1,0 +1,84 @@
+.form-item {
+  margin: 0 0 24px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  .form-hint {
+    margin: 8px 8px 0 8px;
+    font-weight: 600;
+    display: none;
+  }
+  .form-error {
+    color: #b72b23;
+  }
+  &.has-error .form-error {
+    display: block;
+  }
+}
+
+.input-field {
+  position: relative;
+  display: inline-block;
+  display: block;
+  width: 100%;
+  input {
+    height: 52px;
+    padding: 0 16px;
+    font-size: 16px;
+    font: inherit;
+    border-radius: 4px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    transition: all cubic-bezier(0.645, 0.045, 0.355, 1) 0.25s;
+    appearance: none;
+    outline: none;
+    display: block;
+    width: 100%;
+    &::placeholder {
+      font-weight: 500;
+    }
+    &:focus {
+      border-color: $primary-color-400;
+    }
+    &:focus ~ span {
+      color: $primary-color-600;
+    }
+  }
+  textarea {
+    padding: 12px 16px;
+    font-size: 16px;
+    font: inherit;
+    border-radius: 4px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    transition: all cubic-bezier(0.645, 0.045, 0.355, 1) 0.25s;
+    appearance: none;
+    outline: none;
+    display: block;
+    width: 100%;
+    &:focus {
+      border-color: $primary-color-400;
+    }
+    &:focus ~ span {
+      color: $primary-color-600;
+    }
+  }
+  span {
+    color: $primary-color;
+    font-size: 14px;
+    font-weight: 800;
+    position: absolute;
+    top: 2px;
+    left: 12px;
+    transform: translateY(25%);
+    opacity: 0;
+    transition: all cubic-bezier(0.645, 0.045, 0.355, 1) 0.25s;
+    background-color: white;
+    padding: 0 4px;
+  }
+  &.active span,
+  &.textarea span {
+    opacity: 1;
+    transform: translateY(-10px);
+  }
+}
