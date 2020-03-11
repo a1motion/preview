@@ -42,9 +42,9 @@ Optional TypeScript module that will only be executed on that page. Tf any page 
 
 Any addition css to be loaded on that page.
 
-### `src/pages/[pageName]/data.json`
+#### `src/pages/[pageName]/data.json`
 
-Any precompiled data to be passed to the nunjuck compiler for that page. See [`src/pages/team/data.json`](./src/pages/team/data.json)
+Any precompiled data to be passed to the nunjuck compiler for that page. See [`src/pages/team/data.json`](./src/pages/team/data.json) for an example.
 
 ### `src/pages/templates/`
 
@@ -66,21 +66,31 @@ yarn dev
 
 ## How Building Works
 
-- First the bundler searches for all files in the `src/vender/` folder.
+- First the bundler searches for all JavaScript files in the `src/vender/` folder.
   - With all of the files, are combined into one giant file, with some extra code to ensure they don't collide with each other.
   - Them the file to passed to [babel](https://babeljs.io/) where it processed twice, once for a legacy build and again for a modern build.
 
     - The code is written in [TypeScript](https://www.typescriptlang.org/) and includes a syntax that most browsers don't support. To accommodate, we transpile every file into a state that all browsers support with polyfills added for dumb browsers like IE.
+
     - The modern bundle is just an optimized version of the source code with the type system stripped out.
 
-- Secondly the bundler does the same for all files in the `src/app/` folder as it the `src/vender/` folder.
+- Secondly the bundler does the same for all JavaScript/TypeScript files in the `src/app/` folder as it the `src/vender/` folder.
 
   - The app bundle also has the output file annotated to indicate where each section of the file originated from.
 
-- Thirdly, we gather all of the pages for the site in `src/pages/`
+- Thirdly the bundler will compile the App css in `src/app/app.scss`
+
+  - Instead of normal `css`, we use [scss](https://sass-lang.com/). scss is like css but support many more features, like variables, mixins, functions, and more importantly nested styles.<br>This removes the need for writing repetitive selector, which produces more clean and readable code. All of this can however be compile down to normal css.
+
+  - After we run out scss through the scss compiler, we throw the resulting css through the [postcss](https://postcss.org/) tool. This adds browser prefixes and polyfills to our css to support all browsers.
+
+  - Also if we are in a production build, we use the [cssnano](https://cssnano.co/) plugin for postcss, to minify the resulting css.
+
+- Lastly, we gather all of the pages for the site in `src/pages/`
 
   - Each page is ran through the [nunjucks](https://mozilla.github.io/nunjucks/) compiler
   - If a TypeScript file exists for that page, we also transpile the file as we did above, but we keep it separate from everything else.
+  - If a `scss` file exists for that page, we also run it through the bundler, and output it as a separate file.
   - With the `app`, `vender` and optional page script, we inject the resulting scripts into the bottom of the `<body>` tag.
     - This makes use of the `nomodule` and `type="module"` attributes to serve the correct bundle to the correct browsers.
     - Older browsers like IE, don't support the `type` attribute to be anything other than `application/javascript`, so it will load the corresponding script with the `nomodule` attribute.
