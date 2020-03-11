@@ -1,5 +1,6 @@
 interface App {
   init(): Promise<void>;
+  version: string;
 }
 
 interface Window {

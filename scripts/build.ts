@@ -1,4 +1,5 @@
 import path from "path";
+import { execSync, exec } from "child_process";
 import crypto from "crypto";
 import globby from "globby";
 import fs from "fs";
@@ -11,6 +12,10 @@ import postcssPresetEnv from "postcss-preset-env";
 import cssnano from "cssnano";
 import sass from "node-sass";
 import prettier from "prettier";
+
+const VERSION = execSync(`git rev-parse --short HEAD`)
+  .toString()
+  .trim();
 
 const cwd = path.join(__dirname, `..`, `src`);
 const buildDir = path.join(__dirname, `..`, `build`);
@@ -235,10 +240,9 @@ export async function app(unpublished: boolean, modern: boolean) {
   /**
    * Bundle each of the app files into a single file, adding a comment header.
    */
-  const bundled = files.reduce(
-    (a, b) => `${a}\n${b}`,
-    `// https://github.com/a1motion/preview`
-  );
+  const bundled = files
+    .reduce((a, b) => `${a}\n${b}`, `// https://github.com/a1motion/preview`)
+    .replace(`%VERSION%`, VERSION);
 
   /**
    * Transform the bundled javascript with babel

@@ -1,3 +1,5 @@
+App.version = `%VERSION%`;
+
 function domLoaded() {
   return (
     //@ts-ignore
