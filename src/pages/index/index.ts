@@ -135,6 +135,10 @@ const EasingFunctions = {
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 function listener(pixels: PixelArray, i: number) {
+  if (!inited) {
+    return;
+  }
+
   if (locations[i][3]) {
     return;
   }
