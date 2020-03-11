@@ -42,6 +42,10 @@ Optional TypeScript module that will only be executed on that page. Tf any page 
 
 Any addition css to be loaded on that page.
 
+### `src/pages/[pageName]/data.json`
+
+Any precompiled data to be passed to the nunjuck compiler for that page. See [`src/pages/team/data.json`](./src/pages/team/data.json)
+
 ### `src/pages/templates/`
 
 Collection of Nunjuck templates, macro and utils for building pages and components.
