@@ -1,0 +1,48 @@
+{% extends "../../templates/base.njk" %}
+
+{% block main %}
+  <div class="section container">
+    <svg viewBox="0 0 300 100" id="hero">
+    {% for i in range(0, 103) %}
+      <rect width="4" height="4" data-index="{{i}}"></rect>
+    {% endfor %}
+    </svg>
+  </div>
+
+  <div class="section container">
+    <h3>What we can do</h3>
+  </div>
+
+  <div class="grey">
+    <div class="section container">
+      <h3>Textiles</h3>
+      <p class="flow-text">
+      North Carolina has a strong textile history that has historically thrived and built our communities. Though not what it used to be, textiles still thrives today and has been forced to adapt to stay competitive. Better quality control, more efficient processes, more automation, and easier adaptation is what it has taken to excel in the industry. We know, because we have been at the forefront of it all.
+    </p>
+    </div>
+  </div>
+
+  <div class="section container">
+    <h3>Plastics</h3>
+    <p class="flow-text">
+      North Carolina has a strong textile history that has historically thrived and built our communities. Though not what it used to be, textiles still thrives today and has been forced to adapt to stay competitive. Better quality control, more efficient processes, more automation, and easier adaptation is what it has taken to excel in the industry. We know, because we have been at the forefront of it all.
+    </p>
+  </div>
+
+  <div class="grey">
+    <div class="section container">
+      <h3>Metal</h3>
+      <p class="flow-text">
+      North Carolina has a strong textile history that has historically thrived and built our communities. Though not what it used to be, textiles still thrives today and has been forced to adapt to stay competitive. Better quality control, more efficient processes, more automation, and easier adaptation is what it has taken to excel in the industry. We know, because we have been at the forefront of it all.
+    </p>
+    </div>
+  </div>
+
+  <div class="section container">
+    <h3>Paper</h3>
+    <p class="flow-text">
+      North Carolina has a strong textile history that has historically thrived and built our communities. Though not what it used to be, textiles still thrives today and has been forced to adapt to stay competitive. Better quality control, more efficient processes, more automation, and easier adaptation is what it has taken to excel in the industry. We know, because we have been at the forefront of it all.
+    </p>
+  </div>
+
+{% endblock %}

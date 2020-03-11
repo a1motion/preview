@@ -1,0 +1,25 @@
+{% from "../../templates/input.njk" import field, textarea %}
+{% from "../../templates/button.njk" import button %}
+{% extends "../../templates/base.njk" %}
+
+{% block head %}
+  <title>Contact Us - A-1 Motion &amp; Design, Inc</title>
+{% endblock %}
+
+{% block main %}
+  <div class="container section row">
+    <div class="col sm-12 md-8 push-md-2">
+      <div class="contact-card shadow-lg">
+        <form id="contact-form">
+          <h3 class="title">Contact</h3>
+          {{ field('name', label="Full Name") }}
+          {{ field('email', label="Email", type="email") }}
+          {{ textarea('message', label="Message") }}
+          <div class="form-item">
+            {{ button("Submit", primary="true") }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

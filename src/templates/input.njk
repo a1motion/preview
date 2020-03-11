@@ -1,0 +1,20 @@
+{% macro field(name, label = '', value = '', type = 'text') %}
+  <div class="form-item">
+    <label class="input-field">
+      <input type="{{ type }}" name="{{ name }}" id="{{ name }}"
+         value="{{ value | escape }}" placeholder="{{ label | escape }}"/>
+      <span>{{label}}</span>
+    </label>
+    <div class="form-hint form-error"></div>
+  </div>
+{% endmacro %}
+
+{% macro textarea(name, label = "", value = "") %}
+  <div class="form-item">
+    <label class="input-field">
+      <textarea name="{{ name }}" id="{{ name }}" placeholder="{{ label | escape }}">{{value}}</textarea>
+      <span>{{label}}</span>
+    </label>
+    <div class="form-hint form-error"></div>
+  </div>
+{% endmacro %}
