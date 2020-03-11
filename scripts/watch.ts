@@ -12,6 +12,11 @@ import {
   transformCSS,
 } from "./build";
 
+/**
+ * Returns a function, that, as long as it continues to be invoked, will not
+ * be triggered. The function will be called after it stops being called for
+ * N milliseconds.
+ */
 export function debounce<T extends (...params: any[]) => void>(
   cb: T,
   wait = 20
@@ -25,10 +30,20 @@ export function debounce<T extends (...params: any[]) => void>(
   return <T>(<any>callable);
 }
 
+/**
+ * The core of the auto-updating functionality of the `dev` program.
+ *
+ * This class wraps a incoming request from express.
+ * It will, when notified by the dev server, indicate to the client that it needs
+ * to refresh.
+ */
 class SSEClient {
   location: string;
   res: express.Response;
   constructor(req: express.Request, res: express.Response) {
+    /**
+     * Mark the client and keep its location in memory.
+     */
     this.location = (req.query.location as string).slice(1);
     if (this.location === ``) {
       this.location = `index`;
@@ -36,25 +51,51 @@ class SSEClient {
 
     this.res = res;
   }
+  /**
+   * If location is provided and this client has
+   * the same location, then we indicate to the client to refresh.
+   * This is used when a page specific asset is updated.
+   *
+   * If no location is provided then we just force the client to refresh,
+   * this is used when a global asset is updated.
+   */
   update(location?: string) {
     if (!location || this.location === location) {
       this.res.write(`event: update\ndata: ""\n\n`);
     }
   }
 }
+/**
+ * Keep all of the clients in a set.
+ */
 const clients = new Set<SSEClient>();
+/**
+ * This function simpily calls the `SSEClient.prototype.update`
+ * function on all of the connected clients.
+ */
 const updateAllClients = (location?: string) => {
   clients.forEach((client) => {
     client.update(location);
   });
 };
 
+/**
+ * A list of global javascript assets.
+ * This is mostly a constant with the values: ['app.js', 'vender.js'],
+ * but exists for extendable if ever needed in the future.
+ */
 const globalJavascriptAssets: string[] = [];
+/**
+ * This is a list of all known pages.
+ */
 const pages: string[] = [];
 
 const cwd = path.join(__dirname, `..`, `src`);
 const buildDir = path.join(__dirname, `..`, `build`);
 
+/**
+ * Build out `vender.js`
+ */
 const vender = async () => {
   let files = await globby(`vender/**/*.js`, { cwd });
   files = await readFiles(files);
@@ -66,6 +107,9 @@ const vender = async () => {
   }
 };
 
+/**
+ * Build out `app.js`
+ */
 const appJS = async () => {
   let files = (await globby(`app/**/*.ts`, { cwd })).sort((a, b) =>
     a.localeCompare(b)
@@ -82,6 +126,9 @@ const appJS = async () => {
   }
 };
 
+/**
+ * Build out `app.css`
+ */
 const appCSS = async () => {
   const output = await transformCSS(path.join(cwd, `app/app.scss`), true);
   await fs.promises.writeFile(path.join(buildDir, `app.css`), output);
@@ -171,6 +218,18 @@ const pageCSS = (file: string) =>
     updateAllClients(pageName);
   }, 250);
 
+/**
+ * This function is sent to the client.
+ *
+ * It establishes a connect to the responding server,
+ * and waits for the `update` event to occur.
+ * When it recieves that event, it refreshes the page.
+ *
+ * * This function isn't actually sent to the client.
+ * * Instead we read the source of the function and sent its
+ * * string represenation instead.
+ * * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/toString
+ */
 function liveReloadable() {
   const source = new EventSource(
     `/_sse?location=${encodeURIComponent(location.pathname)}`
@@ -227,8 +286,25 @@ async function main() {
       updateAllClients();
     });
 
+  /**
+   * This is a collection of page builders.
+   *
+   * In an effort to import proformance,
+   * we don't need to rebuild each page every time the page is saved.
+   * (I have a habit of spamming the save button when saving a file.)
+   *
+   * So each page has it own debounced builder function that forces a wait time of `250ms`.
+   */
   const pageHolders: { [key: string]: any } = {};
 
+  /**
+   * This watchs all of the page templates, and notifies us when any of them is updated.
+   *
+   * This also triggers an update on the initial run for each page.
+   *
+   * When a page is updated, if create a page builder for it, if it doesn't have one yet.
+   * Then we excute the page builder.
+   */
   chokidar
     .watch(`pages/*/*.njk`, {
       cwd,
@@ -250,6 +326,11 @@ async function main() {
       pageHolders[pageName]();
     });
 
+  /**
+   * Whenever a template is added or changed,
+   * it's unclear (for now), what pages use that template,
+   * so we just execute all of the page builders we have so far.
+   */
   chokidar
     .watch(`templates/*.njk`, { cwd, ignoreInitial: true })
     .on(`add`, () => {
@@ -262,6 +343,11 @@ async function main() {
         handler();
       }
     });
+
+  /**
+   * The following two sections are the same as above for the page templates,
+   * however these are for the page javascript and page css files.
+   */
 
   const pageJSHolders: { [key: string]: any } = {};
   chokidar
@@ -305,7 +391,18 @@ async function main() {
 
       pageCSSHolders[pageName]();
     });
+
+  /**
+   * Start an `express` server.
+   * This is a small HTTP server for node.js
+   */
   const app = express();
+  /**
+   * Whenever we get a request, we look at the url and see if its a page we have.
+   * If we have that page will go read the page off the disk, and add a short script to the end.
+   * This script, which is defined above as `liveReloadable`, connects to this server, and waits for
+   * instructions to refresh the page.
+   */
   app.get(`*`, async (req, res, next) => {
     const url = req.url === `/` ? `index` : req.url.slice(1);
     if (pages.includes(url)) {
@@ -322,15 +419,45 @@ async function main() {
 
     return next();
   });
+  /**
+   * This is a simple middleware that is build into `express`,
+   * it will just serve the client any file in the given directory,
+   * in this instance we serve the `./build` directory.
+   */
   app.use(express.static(buildDir));
+
+  /**
+   * This is where all of the live reloadable stuff starts.
+   *
+   * Whenever a page is served to the client. The client will
+   * connect back to this server using Server-Sent Events.
+   *
+   */
   app.get(`/_sse`, (req, res) => {
+    /**
+     * Wrap the client in a SEEClient class.
+     */
     const client = new SSEClient(req, res);
+    /**
+     * Set the headers for this request.
+     */
     res.status(200).set({
       Connection: `keep-alive`,
       "Content-Type": `text/event-stream`,
     });
+    /**
+     * Flush (aka write) the headers to the client.
+     * This is required for SSE to work properly.
+     */
     res.flushHeaders();
+    /**
+     * Add this client to our set of connected clients.
+     */
     clients.add(client);
+    /**
+     * Whenever the client disconnects, for any reason,
+     * we remove them from our set of clients.
+     */
     res.on(`finish`, () => {
       clients.delete(client);
     });

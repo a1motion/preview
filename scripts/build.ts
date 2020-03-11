@@ -179,6 +179,11 @@ export async function transformCSS(
   });
 }
 
+/**
+ * Build out and bundle the vender folder.
+ *
+ * In the unpublished format, this will also prettify the output.
+ */
 export async function vender(unpublished: boolean, modern: boolean) {
   spinner.info(`[build] [${modern ? `modern` : `legacy`}] [vender] starting`);
   let files = await globby(`vender/**/*.js`, { cwd });
@@ -209,19 +214,36 @@ export async function vender(unpublished: boolean, modern: boolean) {
   return filename;
 }
 
+/**
+ * Build out and bundle the app folder.
+ *
+ * In the unpublished format, this will also prettify the output.
+ */
 export async function app(unpublished: boolean, modern: boolean) {
   spinner.info(`[build] [${modern ? `modern` : `legacy`}] [app] starting`);
   let files = (await globby(`app/**/*.ts`, { cwd })).sort((a, b) =>
     a.localeCompare(b)
   );
   files = await readFiles(files);
+  /**
+   * Wrap each file in a IIFE with the `App`
+   * paramater that gets or creates the global `App` object.
+   */
   files = files.map(
     (file) => `!(function(App){${file}})(window.App = window.App || {});`
   );
+  /**
+   * Bundle each of the app files into a single file, adding a comment header.
+   */
   const bundled = files.reduce(
     (a, b) => `${a}\n${b}`,
     `// https://github.com/a1motion/preview`
   );
+
+  /**
+   * Transform the bundled javascript with babel
+   * and minify if we're in production mod.
+   */
   const output = await transformJavascript(
     bundled,
     `app.js`,
@@ -244,8 +266,15 @@ export async function app(unpublished: boolean, modern: boolean) {
   return filename;
 }
 
+/**
+ * Build out the app scss file.
+ */
 export async function appCss(unpublished: boolean) {
   spinner.info(`[build] [css] [app] starting`);
+  /**
+   * We run our app.scss file through the scss
+   * compiler and add a comment header to the result.
+   */
   const output =
     `/* https://github.com/a1motion/preview */\n` +
     (await transformCSS(path.join(cwd, `app/app.scss`), unpublished));
@@ -305,6 +334,10 @@ export const fileExists = async (path: string) =>
 
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 
+/**
+ * Build out each of the pages in our project,
+ * and each of their own dependecies.
+ */
 async function pages(
   unpublished: boolean,
   assets: {
