@@ -1,3 +1,6 @@
+a.btn {
+  text-decoration: none;
+}
 .btn {
   outline: 0;
   background: rgb(246, 248, 250);
@@ -45,5 +48,9 @@
       background: $primary-color-700;
       border-color: darken($primary-color-600, 1.5%);
     }
+  }
+  &.btn-large {
+    font-size: 22px;
+    padding: 12px 22px;
   }
 }
