@@ -3,9 +3,7 @@
 {% block main %}
   <div class="section container">
     <svg viewBox="0 0 300 100" id="hero">
-    {% for i in range(0, 103) %}
-      <rect width="4" height="4" data-index="{{i}}"></rect>
-    {% endfor %}
+    {% for i in range(0, 103) %} <rect width="4" height="4" visibility="hidden" data-index="{{i}}"></rect> {% endfor %}
     </svg>
   </div>
 

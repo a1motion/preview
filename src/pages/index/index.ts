@@ -29,7 +29,16 @@ function getRandomIntInclusive(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function delay(fn: () => void) {
+/**
+ * This is ponyfill for requestAnimationFrame,this ensure we
+ * only work on frames that will be rendered by the browser.
+ *
+ * This keeps the browser responsive while keeping our
+ * animations smooth to the user.
+ * @param {Function} fn
+ */
+
+function delay(fn: () => void): void {
   if (`requestAnimationFrame` in window) {
     requestAnimationFrame(fn);
   } else {
@@ -39,19 +48,19 @@ function delay(fn: () => void) {
 
 type PixelArray = SVGRectElement[];
 
+/**
+ * We keep track of when the initial animation is finished.
+ * If not all event listeners do thing.
+ */
 let inited = false;
 function init(pixels: PixelArray) {
   if (!pixels) {
     return;
   }
 
-  pixels.forEach((p) => {
-    if (!p || p === null) {
-      return;
-    }
-
-    p.setAttribute(`fill`, `#fff`);
-  });
+  /**
+   * Render each pixel at their randomized position from the starting location.
+   */
   rerender(pixels);
   locations.forEach((_, i) => {
     setTimeout(() => {
@@ -59,9 +68,27 @@ function init(pixels: PixelArray) {
         return;
       }
 
+      /**
+       * Ensure each pixel is visible to the user.
+       */
       pixels[i]!.setAttribute(`visibility`, `visible`);
+      /**
+       * Correctly set the color of the pixel to whatever was generated for it.
+       */
       pixels[i]!.setAttribute(`fill`, locations[i][2]);
+      /**
+       * Store the current time. This is used to animated
+       * all of our pixels back to their starting locations.
+       */
       const t = Date.now();
+      /**
+       *
+       * @param n Index of the pixel.
+       * @param x Where the pixel started (x).
+       * @param y Where the pixel started (y).
+       * @param x1 Where the pixel is moving to (x).
+       * @param y1 Where the pixel is moving to (y).
+       */
       const animate = (
         n: number,
         x: number,
@@ -69,10 +96,37 @@ function init(pixels: PixelArray) {
         x1: number,
         y1: number
       ) => {
+        /**
+         * Calcuate the amount of time that has
+         * elasped since this animation started.
+         */
         const past = Date.now() - t;
+        /**
+         * Calcuate the percent of where we are in the animation.
+         * The initial animation is 500ms.
+         * So if are currently animated the 100ms time, then dt would be 0.2 or 20%.
+         */
         let dt = past / 500;
+        /**
+         * Calcuate the amount we have to move
+         * the pixel to get to its desired location.
+         */
         const dx = x1 - x;
         const dy = y1 - y;
+        /**
+         * If we are done with the animation,
+         * we force set the position of the
+         * pixel to be where is supposed to be.
+         *
+         * If this is the last pixel to finish being animated, we also set our
+         * `inited` flag so that the pixel can be further animated by the user.
+         *
+         * If the animation is not complete (dt < 1), then we calcuate where the pixel is supposed
+         * to be based on how much time has elapsed using one of our easing functions.
+         *
+         * These functions return a percent of where it should be,
+         * so we use this percentage to calcucate its real position.
+         */
         if (dt >= 1) {
           locations[n][0] = x1;
           locations[n][1] = y1;
@@ -80,15 +134,26 @@ function init(pixels: PixelArray) {
             inited = true;
           }
         } else {
+          /**
+           * dt used to be the percentage of the time elsaped,
+           * now it has an easing function applied to it.
+           *
+           * ? We could remove this and replace 0, 1 with x, x1 but then we would have
+           * ? to call the easing function twice. Not sure if there would be a performance hit or not.
+           */
           dt = EasingFunctions.easeOutExpo(null, past, 0, 1, 500);
+          /**
+           * Using our eased dt we calculate where the next position is.
+           */
           locations[n][0] = x + dx * dt;
           locations[n][1] = y + dy * dt;
+          /**
+           * After we render this frame, calcuate the next frame.
+           */
           delay(() => {
             animate(n, x, y, x1, y1);
           });
         }
-
-        rerender(pixels);
       };
 
       const [x, y] = locations[i];
@@ -96,8 +161,22 @@ function init(pixels: PixelArray) {
       delay(() => animate(i, x, y, x1, y1));
     }, 15 * i);
   });
+
+  const render = () => {
+    if (!inited) {
+      rerender(pixels);
+      delay(render);
+    }
+  };
+
+  render();
+  delay(render);
 }
 
+/**
+ * Sets the current positions in
+ * the locations array to its corresponding pixel.
+ */
 function rerender(pixels: PixelArray) {
   pixels.forEach((a, i) => {
     if (!a || a === null) {
@@ -108,31 +187,58 @@ function rerender(pixels: PixelArray) {
     a.setAttribute(`y`, `${locations[i][1] + 38}`);
   });
 }
-/* eslint-disable */
+
 const EasingFunctions = {
-  easeOutExpo: function(x: null, t: number, b: number, c: number, d: number) {
-    return t === d ? b + c : c * (-Math.pow(2, (-10 * t) / d) + 1) + b
+  /**
+   *
+   * @param x null
+   * @param t Start Time
+   * @param b Start Value
+   * @param c End Value
+   * @param d Total Time
+   */
+  easeOutExpo(x: null, t: number, b: number, c: number, d: number) {
+    return t === d ? b + c : c * (-Math.pow(2, (-10 * t) / d) + 1) + b;
   },
-  easeOutElastic: function(x: null, t: number, b: number, c: number, d: number): number {
-    var s = 1.70158
-    var p = 0
-    var a = c
-    if (t == 0) return b
-    if ((t /= d) == 1) return b + c
-    if (!p) p = d * 0.3
+  /**
+   *
+   * @param x null
+   * @param t Start Time
+   * @param b Start Value
+   * @param c End Value
+   * @param d Total Time
+   */
+  easeOutElastic(x: null, t: number, b: number, c: number, d: number): number {
+    let s = 1.70158;
+    let p = 0;
+    let a = c;
+    if (t === 0) {
+      return b;
+    }
+
+    // eslint-disable-next-line no-cond-assign
+    if ((t /= d) === 1) {
+      return b + c;
+    }
+
+    if (!p) {
+      p = d * 0.3;
+    }
+
     if (a < Math.abs(c)) {
-      a = c
-      var s = p / 4
-    } else var s = (p / (2 * Math.PI)) * Math.asin(c / a)
+      a = c;
+      s = p / 4;
+    } else {
+      s = (p / (2 * Math.PI)) * Math.asin(c / a);
+    }
+
     return (
       a * Math.pow(2, -10 * t) * Math.sin(((t * d - s) * (2 * Math.PI)) / p) +
       c +
       b
-    )
-  }
-}
-/* eslint-enable */
-/* eslint-disable @typescript-eslint/no-use-before-define */
+    );
+  },
+};
 
 function listener(pixels: PixelArray, i: number) {
   if (!inited) {
@@ -182,6 +288,17 @@ function listener(pixels: PixelArray, i: number) {
   animate(other, x1, y1, x, y);
 }
 
+/**
+ * The starting postion of every pixel. This is what correctly spells out
+ * `A-1 Motion`.
+ * Each pixel has the following structure:
+ * [
+ *   x,        The position where the pixel should be render at next,
+ *   y,        this includes the postions inbetween the start and end animations.
+ *   color,    The color of the pixel, this is constant and generated once at runtime.
+ *   isMoving  Flag that determines if a pixel is moving, which disables all events for that pixel.
+ * ]
+ */
 const startLocations: Array<[number, number, string, boolean]> = [
   [0, 0, randomColor(), false],
   [5, 0, randomColor(), false],
@@ -287,9 +404,16 @@ const startLocations: Array<[number, number, string, boolean]> = [
   [245, 5, randomColor(), false],
   [245, 0, randomColor(), false],
 ];
+/**
+ * This is a mutatable version of the locations above.
+ */
 const locations: typeof startLocations = JSON.parse(
   JSON.stringify(startLocations)
 );
+/**
+ * At the start, we randomly move each pixel a little bit.
+ * After we start, we animate them all back to their starting postion.
+ */
 locations.forEach((a) => {
   a[0] = a[0] + getRandomIntInclusive(-50, 50);
   a[1] = a[1] + getRandomIntInclusive(-25, 25);
