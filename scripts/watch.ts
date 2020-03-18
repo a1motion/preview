@@ -232,9 +232,11 @@ const pageCSS = (file: string) =>
  */
 function liveReloadable() {
   const source = new EventSource(
-    `/_sse?location=${encodeURIComponent(location.pathname)}`
+    // eslint-disable-next-line quotes
+    "/_sse?location=" + encodeURIComponent(location.pathname)
   );
-  source.addEventListener(`update`, () => {
+  // eslint-disable-next-line quotes, prefer-arrow-callback
+  source.addEventListener("update", function update() {
     document.location.reload();
   });
 }

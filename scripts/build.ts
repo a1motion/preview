@@ -9,6 +9,7 @@ import ora from "ora";
 import nunjuck from "nunjucks";
 import postcss from "postcss";
 import postcssPresetEnv from "postcss-preset-env";
+import postcssFlexbugsFixes from "postcss-flexbugs-fixes";
 import cssnano from "cssnano";
 import sass from "node-sass";
 import prettier from "prettier";
@@ -160,6 +161,7 @@ export async function transformCSS(
         } else {
           postcss(
             [
+              postcssFlexbugsFixes(),
               postcssPresetEnv({
                 autoprefixer: {
                   flexbox: `no-2009`,

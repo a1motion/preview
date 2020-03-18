@@ -53,3 +53,9 @@ App.init = function init() {
     }
   });
 };
+
+App.init().then(() => {
+  Sentry.init({
+    dsn: `https://2b095212a1944dc8a8eaffe2af9f7a47@sentry.a1motion.com/4`,
+  });
+});

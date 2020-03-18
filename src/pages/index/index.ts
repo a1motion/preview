@@ -240,25 +240,54 @@ const EasingFunctions = {
   },
 };
 
+/**
+ * This function is called whenever a pixel is click or moused over.
+ *
+ * It is essentially the same as the init() function, with one key difference,
+ * this function animations two pixels at the same time, animating each one to
+ * the location of where the other was.
+ */
 function listener(pixels: PixelArray, i: number) {
+  /**
+   * If all pixel have not reached their starting position, we don't animated.
+   *
+   * This is a limitation in how we store the current pixel locations and end location,
+   * i.e. there is no way to stop a pixel from reaching its destination or modiifying it.
+   */
   if (!inited) {
     return;
   }
 
+  /**
+   * If the current pixel is currently moving, we can't do anything.
+   */
   if (locations[i][3]) {
     return;
   }
 
+  /**
+   * We randomly get a new pixel,
+   * looping until we find a pixel that is not moving.
+   */
   let other: number | undefined;
   while (!other) {
     const t = getRandomIntInclusive(0, locations.length - 1);
-    if (!locations[t][3]) {
+    if (!locations[t][3] && other !== i) {
       other = t;
     }
   }
 
+  /**
+   * Set both pixels to a moving state.
+   */
   locations[i][3] = true;
   locations[other][3] = true;
+  /**
+   * Everything below is the same as below, expect
+   * that we call the animate function twice to start off with.
+   *
+   * Once for each pixel, with the xy coordinates flipped on the second call.
+   */
   const t = Date.now();
   const animate = (n: number, x: number, y: number, x1: number, y1: number) => {
     const past = Date.now() - t;
