@@ -97,14 +97,14 @@
       background-color: #202020;
       color: #fff;
       &:focus ~ span {
-        color: #fff;
+        color: lighten($primary-color, 25%);
       }
     }
     textarea {
       background-color: #202020;
       color: #fff;
       &:focus ~ span {
-        color: #fff;
+        color: lighten($primary-color, 25%);
       }
     }
     span {
