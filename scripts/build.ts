@@ -1,5 +1,5 @@
 import path from "path";
-import { execSync, exec } from "child_process";
+import { execSync } from "child_process";
 import crypto from "crypto";
 import globby from "globby";
 import fs from "fs";
@@ -79,7 +79,7 @@ function minify(code: string, modern?: boolean) {
     },
     output: {
       ecma: modern ? 2015 : 5,
-      comments: true,
+      comments: `some`,
     },
     module: modern,
   }).code!;
