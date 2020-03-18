@@ -121,17 +121,17 @@ export async function transformJavascript(
   unpublished: boolean,
   modern: boolean
 ) {
-  spinner.info(
-    `[build] [tranform] [${modern ? `modern` : `legacy`}] ${fileName}`
-  );
+  spinner.text = `[build] [tranform] [${
+    modern ? `modern` : `legacy`
+  }] ${fileName}`;
   let output = await babel(code, fileName, modern);
   if (!unpublished) {
     output = minify(output);
   }
 
-  spinner.succeed(
-    `[build] [tranform] [${modern ? `modern` : `legacy`}] ${fileName}`
-  );
+  spinner.text = `[build] [tranform] [${
+    modern ? `modern` : `legacy`
+  }] ${fileName}`;
   return output;
 }
 
@@ -149,7 +149,7 @@ export async function transformCSS(
   unpublished: boolean
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    spinner.info(`[build] [tranform] [css] ${fileName}`);
+    spinner.text = `[build] [tranform] [css] ${fileName}`;
     sass.render(
       {
         file: fileName,
@@ -192,7 +192,7 @@ export async function transformCSS(
  * In the unpublished format, this will also prettify the output.
  */
 export async function vender(unpublished: boolean, modern: boolean) {
-  spinner.info(`[build] [${modern ? `modern` : `legacy`}] [vender] starting`);
+  spinner.text = `[build] [${modern ? `modern` : `legacy`}] [vender]`;
   let files = await globby(`vender/**/*.js`, { cwd });
   files = await readFiles(files);
   const bundled = files.reduce(
@@ -217,7 +217,6 @@ export async function vender(unpublished: boolean, modern: boolean) {
     filename,
     unpublished ? prettier.format(output, { parser: `babel` }) : output
   );
-  spinner.succeed(`[build] [${modern ? `modern` : `legacy`}] [vender] done`);
   return filename;
 }
 
@@ -227,7 +226,7 @@ export async function vender(unpublished: boolean, modern: boolean) {
  * In the unpublished format, this will also prettify the output.
  */
 export async function app(unpublished: boolean, modern: boolean) {
-  spinner.info(`[build] [${modern ? `modern` : `legacy`}] [app] starting`);
+  spinner.text = `[build] [${modern ? `modern` : `legacy`}] [app]`;
   let files = (await globby(`app/**/*.ts`, { cwd })).sort((a, b) =>
     a.localeCompare(b)
   );
@@ -268,7 +267,6 @@ export async function app(unpublished: boolean, modern: boolean) {
     filename,
     unpublished ? prettier.format(output, { parser: `babel` }) : output
   );
-  spinner.succeed(`[build] [${modern ? `modern` : `legacy`}] [app] done`);
   return filename;
 }
 
@@ -276,7 +274,7 @@ export async function app(unpublished: boolean, modern: boolean) {
  * Build out the app scss file.
  */
 export async function appCss(unpublished: boolean) {
-  spinner.info(`[build] [css] [app] starting`);
+  spinner.text = `[build] [css] [app]`;
   /**
    * We run our app.scss file through the scss
    * compiler and add a comment header to the result.
@@ -295,15 +293,13 @@ export async function appCss(unpublished: boolean) {
     filename,
     unpublished ? prettier.format(output, { parser: `css` }) : output
   );
-  spinner.succeed(`[build] [css] [app] done`);
   return filename;
 }
 
 export async function build(unpublished: boolean, modern: boolean) {
-  spinner.info(`[build] [${modern ? `modern` : `legacy`}] starting`);
+  spinner.text = `[build] [${modern ? `modern` : `legacy`}]`;
   const venderFileName = await vender(unpublished, modern);
   const appFileName = await app(unpublished, modern);
-  spinner.succeed(`[build] [${modern ? `modern` : `legacy`}] done`);
   return { venderFileName, appFileName };
 }
 
@@ -325,7 +321,7 @@ export function generateModernScriptTag(fileName: string) {
   return `<script src="https://cdn.a1motion.com/preview/${path.relative(
     buildDir,
     fileName
-  )}" type="module" defer></script>`;
+  )}" type="module"></script>`;
 }
 
 export function generateStyleSheetTag(fileName: string) {
@@ -352,13 +348,13 @@ async function pages(
     css: ThenArg<ReturnType<typeof appCss>>;
   }
 ) {
-  spinner.info(`[build] [pages] starting`);
+  spinner.text = `[build] [pages]`;
   const files = (await globby(`pages/*/*.njk`, { cwd })).map((file) =>
     path.join(cwd, file)
   );
   for (const file of files) {
     const { dir: pageDir, name: pageName } = path.parse(file);
-    spinner.info(`[build] [pages] [${pageName}] starting`);
+    spinner.text = `[build] [pages] [${pageName}]`;
     let data = {};
     if (await fileExists(path.join(pageDir, `data.json`))) {
       data = require(path.join(pageDir, `data.json`));
@@ -368,7 +364,7 @@ async function pages(
 
     let pageJavascript;
     if (await fileExists(path.join(pageDir, `${pageName}.ts`))) {
-      spinner.info(`[build] [pages] [${pageName}] [js] starting`);
+      spinner.text = `[build] [pages] [${pageName}] [js]`;
       const pageJavascriptCode =
         `// https://github.com/a1motion/preview\n` +
         (await fs.promises.readFile(path.join(pageDir, `${pageName}.ts`), {
@@ -403,12 +399,11 @@ async function pages(
           return filename;
         })
       );
-      spinner.succeed(`[build] [pages] [${pageName}] [js] done`);
     }
 
     let pageCss;
     if (await fileExists(path.join(pageDir, `${pageName}.scss`))) {
-      spinner.info(`[build] [pages] [${pageName}] [css] starting`);
+      spinner.text = `[build] [pages] [${pageName}] [css]`;
       const output =
         `/* https://github.com/a1motion/preview */\n` +
         (await transformCSS(
@@ -426,7 +421,6 @@ async function pages(
         filename,
         unpublished ? prettier.format(output, { parser: `css` }) : output
       );
-      spinner.succeed(`[build] [pages] [${pageName}] [css] done`);
       pageCss = filename;
     }
 
@@ -467,10 +461,10 @@ async function pages(
       path.join(buildDir, `${pageName}.html`),
       unpublished ? prettier.format(output, { parser: `html` }) : output
     );
-    spinner.succeed(`[build] [pages] [${pageName}] done`);
+    spinner.text = `[build] [pages] [${pageName}] done`;
   }
 
-  spinner.succeed(`[build] [pages] done`);
+  spinner.text = `[build] [pages] done`;
 }
 
 async function main(unpublished: boolean) {
