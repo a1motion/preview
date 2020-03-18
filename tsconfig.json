@@ -4,8 +4,6 @@
     "module": "commonjs",
     "jsx": "react",
     "lib": ["es2017", "dom"],
-    "composite": true,
-    "incremental": true,
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,

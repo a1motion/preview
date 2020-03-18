@@ -1,4 +1,5 @@
 .person-card {
+  margin: 0 8px;
   padding: 24px;
   border: 1px solid #e2e8f0;
   .header {
@@ -57,4 +58,36 @@
 .person::after,
 .person-card .header::after {
   clear: both;
+}
+
+@media (prefers-color-scheme: dark) {
+  .person-card {
+    border-color: #555;
+    .header {
+      .title {
+        color: rgba(255, 255, 255, 0.85);
+      }
+      .description {
+        color: rgba(255, 255, 255, 0.75);
+      }
+    }
+  }
+}
+
+.team-row {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.team-row-item {
+  flex: 100%;
+}
+
+@media only screen and (min-width: 601px) {
+  .team-row-item {
+    flex: 50%;
+    max-width: 50%;
+  }
 }

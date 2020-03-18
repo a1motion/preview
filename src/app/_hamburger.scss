@@ -1,16 +1,18 @@
-$hamburger-padding-x           : 12px !default;
-$hamburger-padding-y           : 12px !default;
-$hamburger-layer-width         : 40px !default;
-$hamburger-layer-height        : 4px !default;
-$hamburger-layer-spacing       : 6px !default;
-$hamburger-layer-color         : #000 !default;
-$hamburger-layer-border-radius : 8px !default;
-$hamburger-hover-opacity       : 0.7 !default;
-$hamburger-active-layer-color  : $hamburger-layer-color !default;
+$hamburger-padding-x: 12px !default;
+$hamburger-padding-y: 12px !default;
+$hamburger-layer-width: 40px !default;
+$hamburger-layer-height: 4px !default;
+$hamburger-layer-spacing: 6px !default;
+$hamburger-layer-color: #000 !default;
+$hamburger-layer-color-dark: #fff !default;
+$hamburger-layer-border-radius: 8px !default;
+$hamburger-hover-opacity: 0.7 !default;
+$hamburger-active-layer-color: $hamburger-layer-color !default;
+$hamburger-active-layer-color-dark: $hamburger-layer-color-dark !default;
 $hamburger-active-hover-opacity: $hamburger-hover-opacity !default;
 
-$hamburger-hover-use-filter   : false !default;
-$hamburger-hover-filter       : opacity(50%) !default;
+$hamburger-hover-use-filter: false !default;
+$hamburger-hover-filter: opacity(50%) !default;
 $hamburger-active-hover-filter: $hamburger-hover-filter !default;
 
 .hamburger {
@@ -34,8 +36,7 @@ $hamburger-active-hover-filter: $hamburger-hover-filter !default;
   &:hover {
     @if $hamburger-hover-use-filter == true {
       filter: $hamburger-hover-filter;
-    }
-    @else {
+    } @else {
       opacity: $hamburger-hover-opacity;
     }
   }
@@ -44,8 +45,7 @@ $hamburger-active-hover-filter: $hamburger-hover-filter !default;
     &:hover {
       @if $hamburger-hover-use-filter == true {
         filter: $hamburger-active-hover-filter;
-      }
-      @else {
+      } @else {
         opacity: $hamburger-active-hover-opacity;
       }
     }
@@ -54,6 +54,18 @@ $hamburger-active-hover-filter: $hamburger-hover-filter !default;
     .hamburger-inner::before,
     .hamburger-inner::after {
       background-color: $hamburger-active-layer-color;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .hamburger {
+    &.is-active {
+      .hamburger-inner,
+      .hamburger-inner::before,
+      .hamburger-inner::after {
+        background-color: $hamburger-active-layer-color-dark;
+      }
     }
   }
 }
@@ -98,6 +110,16 @@ $hamburger-active-hover-filter: $hamburger-hover-filter !default;
   }
 }
 
+@media (prefers-color-scheme: dark) {
+  .hamburger-inner {
+    &,
+    &::before,
+    &::after {
+      background-color: $hamburger-layer-color-dark;
+    }
+  }
+}
+
 .hamburger--slider {
   .hamburger-inner {
     top: $hamburger-layer-height / 2;
@@ -121,7 +143,12 @@ $hamburger-active-hover-filter: $hamburger-hover-filter !default;
       transform: translate3d(0, $y-offset, 0) rotate(45deg);
 
       &::before {
-        transform: rotate(-45deg) translate3d($hamburger-layer-width / -7, $hamburger-layer-spacing * -1, 0);
+        transform: rotate(-45deg)
+          translate3d(
+            $hamburger-layer-width / -7,
+            $hamburger-layer-spacing * -1,
+            0
+          );
         opacity: 0;
       }
 

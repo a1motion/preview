@@ -16,6 +16,14 @@
   }
 }
 
+@media (prefers-color-scheme: dark) {
+  .form-item {
+    .form-error {
+      color: lighten($secondary-color, 25%);
+    }
+  }
+}
+
 .input-field {
   position: relative;
   display: inline-block;
@@ -80,5 +88,28 @@
   &.textarea span {
     opacity: 1;
     transform: translateY(-11px);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-field {
+    input {
+      background-color: #202020;
+      color: #fff;
+      &:focus ~ span {
+        color: #fff;
+      }
+    }
+    textarea {
+      background-color: #202020;
+      color: #fff;
+      &:focus ~ span {
+        color: #fff;
+      }
+    }
+    span {
+      background-color: #202020;
+      color: #fff;
+    }
   }
 }

@@ -4,6 +4,7 @@ $primary-color: #0d47a1;
 $primary-color-400: #3d78c6;
 $primary-color-600: #09368a;
 $primary-color-700: #062873;
+$secondary-color: #ad0701;
 $medium-breakpoint: 601px;
 $large-breakpoint: 993px;
 $extra-large-breakpoint: 1201px;
@@ -23,6 +24,16 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: auto !important;
+  background-color: #eee;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #202020;
+  }
+  a {
+    color: blue;
+  }
 }
 
 /**
@@ -31,6 +42,39 @@ body {
 html {
   font-family: "Inter", sans-serif;
   color: rgba(0, 0, 0, 0.65);
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: #202020;
+    color: #ffffff;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 3px;
+  }
+  ::-webkit-scrollbar-track {
+    background-color: #646464;
+  }
+  ::-webkit-scrollbar-track-piece {
+    background-color: #000;
+  }
+  ::-webkit-scrollbar-thumb {
+    height: 50px;
+    background-color: #666;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-corner {
+    background-color: #646464;
+  }
+  :root {
+    scrollbar-color: #0079d3 #2e3645 !important;
+    scrollbar-width: thin !important;
+  }
+
+  * {
+    scrollbar-width: thin !important;
+  }
 }
 
 /**
@@ -107,6 +151,17 @@ h6 {
   line-height: 1.3;
 }
 
+@media (prefers-color-scheme: dark) {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: #ffffff;
+  }
+}
+
 /**
   Set the font sizes for each of the header sizes.
 */
@@ -167,6 +222,12 @@ p {
   justify-content: space-between;
 }
 
+@media (prefers-color-scheme: dark) {
+  .app-header {
+    border-bottom-color: #444;
+  }
+}
+
 .app-logo {
   width: 48px;
   height: 48px;
@@ -193,6 +254,22 @@ p {
       text-decoration: none;
       color: $primary-color;
       font-weight: 600;
+      &:hover {
+        color: $secondary-color;
+      }
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-nav {
+    & .app-nav-link {
+      & a {
+        color: lighten($primary-color, 25%);
+        &:hover {
+          color: lighten($secondary-color, 25%);
+        }
+      }
     }
   }
 }
@@ -202,7 +279,6 @@ p {
     display: none;
   }
 }
-
 
 .mobile-app-nav {
   display: flex;
@@ -254,6 +330,21 @@ p {
   }
 }
 
+@media (prefers-color-scheme: dark) {
+  .mobile-nav {
+    background-color: #202020;
+    .app-nav {
+      & ul {
+        & li {
+          &:not(:last-child) {
+            border-bottom: 1px solid #444;
+          }
+        }
+      }
+    }
+  }
+}
+
 @media only screen and (min-width: #{$medium-breakpoint + 1px}) {
   .mobile-nav {
     display: none;
@@ -276,6 +367,13 @@ p {
     p {
       margin: 0;
     }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-footer {
+    background-color: #323232;
+    border-top-color: #444;
   }
 }
 
@@ -410,6 +508,12 @@ $element-bottom-margin: ($gutter-width * 2)/3 !default;
   background-color: #f0f2f5;
 }
 
+@media (prefers-color-scheme: dark) {
+  .grey {
+    background-color: #323232;
+  }
+}
+
 .section {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -427,15 +531,15 @@ $element-bottom-margin: ($gutter-width * 2)/3 !default;
 
 @import "grid";
 
-$range : $large-breakpoint - $medium-breakpoint !default;
+$range: $large-breakpoint - $medium-breakpoint !default;
 $intervals: 20 !default;
 $interval-size: $range / $intervals !default;
 
 .flow-text {
   $i: 0;
   @while $i <= $intervals {
-    @media only screen and (min-width : 360 + ($i * $interval-size)) {
-      font-size: 1.2rem * (1 + (.02 * $i));
+    @media only screen and (min-width: 360 + ($i * $interval-size)) {
+      font-size: 1.2rem * (1 + (0.02 * $i));
     }
     $i: $i + 1;
   }
