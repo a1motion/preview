@@ -166,7 +166,7 @@ export async function transformCSS(
                 autoprefixer: {
                   flexbox: `no-2009`,
                 },
-                stage: 3,
+                stage: 2,
                 browsers: babelEnvOptions.old.targets,
               }),
               !unpublished &&
