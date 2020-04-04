@@ -4,7 +4,7 @@ import mime from "mime";
 import aws from "aws-sdk";
 
 aws.config.credentials = new aws.SharedIniFileCredentials({
-  profile: `a1motion`,
+  profile: "a1motion",
 });
 
 const s3 = new aws.S3();
@@ -34,25 +34,25 @@ export async function getFilesInDir(dir: any): Promise<any> {
 }
 
 function contentType(src: string, ext?: string) {
-  return (mime.getType(ext || src) || ``).replace(`-`, ``);
+  return (mime.getType(ext || src) || "").replace("-", "");
 }
 
 const deploy = async () => {
-  const files = await getFilesInDir(`./build`);
+  const files = await getFilesInDir("./build");
   await Promise.all(
     files.map(async (file: any) => {
-      let Key = path.relative(`./build`, file);
+      let Key = path.relative("./build", file);
       const Body = await fs.readFile(file);
-      if (Key.endsWith(`.map`)) {
+      if (Key.endsWith(".map")) {
         return null;
       }
 
       const CacheControl =
-        Key === `index.html`
-          ? `no-cache, no-store, must-revalidate`
-          : `public, max-age=31536000`;
-      const Bucket = `public.a1motion.com`;
-      Key = Key.replace(/\\/g, `/`);
+        Key === "index.html"
+          ? "no-cache, no-store, must-revalidate"
+          : "public, max-age=31536000";
+      const Bucket = "public.a1motion.com";
+      Key = Key.replace(/\\/g, "/");
       Key = `preview/${Key}`;
       return s3
         .putObject({

@@ -8,7 +8,7 @@ function checkForm() {
   /**
    * Get the element of the name input.
    */
-  const nameElement = $(`#contact-form input#name`);
+  const nameElement = $("#contact-form input#name");
   /**
    * Get the containing form-item for the name input,
    * i.e. the element with the class `form-item` that contains the name input.
@@ -17,23 +17,23 @@ function checkForm() {
   /**
    * Convert whatevers in the name input into a string.
    */
-  const name = `` + nameElement.val();
+  const name = "" + nameElement.val();
   /**
    * Get the element where we will place errors for name.
    */
-  const nameErrorElement = nameParent.find(`.form-error`);
+  const nameErrorElement = nameParent.find(".form-error");
   if (!name || name.length === 0) {
-    nameParent.addClass(`has-error`);
-    nameErrorElement.text(`Full name is required.`);
+    nameParent.addClass("has-error");
+    nameErrorElement.text("Full name is required.");
     hasError = true;
   } else {
-    nameParent.removeClass(`has-error`);
+    nameParent.removeClass("has-error");
   }
 
   /**
    * Get the element of the email input.
    */
-  const emailElement = $(`#contact-form input#email`);
+  const emailElement = $("#contact-form input#email");
   /**
    * Get the containing form-item for the email input,
    * i.e. the element with the class `form-item` that contains the email input.
@@ -42,33 +42,33 @@ function checkForm() {
   /**
    * Convert whatevers in the email input into a string.
    */
-  const email = `` + emailElement.val();
+  const email = "" + emailElement.val();
   /**
    * Get the element where we will place errors for email.
    */
-  const emailErrorElement = emailParent.find(`.form-error`);
+  const emailErrorElement = emailParent.find(".form-error");
   /**
    * If the user didn't input an email, notify them
    */
   if (!email || email.length === 0) {
-    emailParent.addClass(`has-error`);
-    emailErrorElement.text(`An email is required.`);
+    emailParent.addClass("has-error");
+    emailErrorElement.text("An email is required.");
     hasError = true;
     /**
      * If the user didn't input a valid email, notify them
      */
   } else if (!validateEmail(email)) {
-    emailParent.addClass(`has-error`);
-    emailErrorElement.text(`An valid email is required.`);
+    emailParent.addClass("has-error");
+    emailErrorElement.text("An valid email is required.");
     hasError = true;
   } else {
-    emailParent.removeClass(`has-error`);
+    emailParent.removeClass("has-error");
   }
 
   /**
    * Get the element of the message textarea.
    */
-  const messageElement = $(`#contact-form textarea#message`);
+  const messageElement = $("#contact-form textarea#message");
   /**
    * Get the containing form-item for the message textarea,
    * i.e. the element with the class `form-item` that contains the message textarea.
@@ -77,25 +77,25 @@ function checkForm() {
   /**
    * Convert whatevers in the message textarea into a string.
    */
-  const message = `` + messageElement.val();
+  const message = "" + messageElement.val();
   /**
    * Get the element where we will place errors for message.
    */
-  const messageErrorElement = messageParent.find(`.form-error`);
+  const messageErrorElement = messageParent.find(".form-error");
   if (!message || message.length === 0) {
-    messageParent.addClass(`has-error`);
-    messageErrorElement.text(`An message is required.`);
+    messageParent.addClass("has-error");
+    messageErrorElement.text("An message is required.");
     hasError = true;
   } else {
-    messageParent.removeClass(`has-error`);
+    messageParent.removeClass("has-error");
   }
 
   return !hasError;
 }
 
 App.init().then(() => {
-  const form = $(`#contact-form`);
-  form.on(`submit`, (e) => {
+  const form = $("#contact-form");
+  form.on("submit", (e) => {
     if (!checkForm()) {
       e.preventDefault();
     }

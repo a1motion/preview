@@ -2,7 +2,7 @@
 /**
  * Few different shades of red.
  */
-const colors = [`#AD0701`, `#D98E8B`, `#6F0501`];
+const colors = ["#AD0701", "#D98E8B", "#6F0501"];
 
 /**
  * Get a random color, but the each weighed differently.
@@ -39,7 +39,7 @@ function getRandomIntInclusive(min: number, max: number): number {
  */
 
 function delay(fn: () => void): void {
-  if (`requestAnimationFrame` in window) {
+  if ("requestAnimationFrame" in window) {
     requestAnimationFrame(fn);
   } else {
     setTimeout(fn, 0);
@@ -71,11 +71,11 @@ function init(pixels: PixelArray) {
       /**
        * Ensure each pixel is visible to the user.
        */
-      pixels[i]!.setAttribute(`visibility`, `visible`);
+      pixels[i]!.setAttribute("visibility", "visible");
       /**
        * Correctly set the color of the pixel to whatever was generated for it.
        */
-      pixels[i]!.setAttribute(`fill`, locations[i][2]);
+      pixels[i]!.setAttribute("fill", locations[i][2]);
       /**
        * Store the current time. This is used to animated
        * all of our pixels back to their starting locations.
@@ -183,8 +183,8 @@ function rerender(pixels: PixelArray) {
       return;
     }
 
-    a.setAttribute(`x`, `${locations[i][0] + 25}`);
-    a.setAttribute(`y`, `${locations[i][1] + 38}`);
+    a.setAttribute("x", `${locations[i][0] + 25}`);
+    a.setAttribute("y", `${locations[i][1] + 38}`);
   });
 }
 
@@ -329,109 +329,109 @@ function listener(pixels: PixelArray, i: number) {
  * ]
  */
 const startLocations: Array<[number, number, string, boolean]> = [
-  [0, 0, ``, false],
-  [5, 0, ``, false],
-  [10, 0, ``, false],
-  [15, 0, ``, false],
-  [20, 0, ``, false],
-  [0, 5, ``, false],
-  [20, 5, ``, false],
-  [0, 10, ``, false],
-  [20, 10, ``, false],
-  [5, 10, ``, false],
-  [10, 10, ``, false],
-  [15, 10, ``, false],
-  [0, 15, ``, false],
-  [20, 15, ``, false],
-  [0, 20, ``, false],
-  [20, 20, ``, false],
-  [30, 10, ``, false],
-  [35, 10, ``, false],
-  [40, 10, ``, false],
-  [55, 5, ``, false],
-  [60, 0, ``, false],
-  [60, 5, ``, false],
-  [60, 10, ``, false],
-  [60, 15, ``, false],
-  [55, 20, ``, false],
-  [60, 20, ``, false],
-  [65, 20, ``, false],
-  [85, 0, ``, false],
-  [85, 5, ``, false],
-  [85, 10, ``, false],
-  [85, 15, ``, false],
-  [85, 20, ``, false],
-  [90, 5, ``, false],
-  [95, 10, ``, false],
-  [100, 5, ``, false],
-  [105, 0, ``, false],
-  [105, 5, ``, false],
-  [105, 10, ``, false],
-  [105, 15, ``, false],
-  [105, 20, ``, false],
-  [115, 0, ``, false],
-  [120, 0, ``, false],
-  [125, 0, ``, false],
-  [130, 0, ``, false],
-  [135, 0, ``, false],
-  [115, 5, ``, false],
-  [135, 5, ``, false],
-  [115, 10, ``, false],
-  [135, 10, ``, false],
-  [115, 15, ``, false],
-  [135, 15, ``, false],
-  [115, 20, ``, false],
-  [120, 20, ``, false],
-  [125, 20, ``, false],
-  [130, 20, ``, false],
-  [135, 20, ``, false],
-  [145, 0, ``, false],
-  [150, 0, ``, false],
-  [155, 0, ``, false],
-  [160, 0, ``, false],
-  [165, 0, ``, false],
-  [155, 5, ``, false],
-  [155, 10, ``, false],
-  [155, 15, ``, false],
-  [155, 20, ``, false],
-  [175, 0, ``, false],
-  [180, 0, ``, false],
-  [185, 0, ``, false],
-  [180, 5, ``, false],
-  [180, 10, ``, false],
-  [180, 15, ``, false],
-  [180, 20, ``, false],
-  [175, 20, ``, false],
-  [185, 20, ``, false],
-  [195, 0, ``, false],
-  [200, 0, ``, false],
-  [205, 0, ``, false],
-  [210, 0, ``, false],
-  [215, 0, ``, false],
-  [195, 5, ``, false],
-  [215, 5, ``, false],
-  [195, 10, ``, false],
-  [215, 10, ``, false],
-  [195, 15, ``, false],
-  [215, 15, ``, false],
-  [195, 20, ``, false],
-  [200, 20, ``, false],
-  [205, 20, ``, false],
-  [210, 20, ``, false],
-  [215, 20, ``, false],
-  [225, 0, ``, false],
-  [225, 5, ``, false],
-  [225, 10, ``, false],
-  [225, 15, ``, false],
-  [225, 20, ``, false],
-  [230, 5, ``, false],
-  [235, 10, ``, false],
-  [240, 15, ``, false],
-  [245, 20, ``, false],
-  [245, 15, ``, false],
-  [245, 10, ``, false],
-  [245, 5, ``, false],
-  [245, 0, ``, false],
+  [0, 0, "", false],
+  [5, 0, "", false],
+  [10, 0, "", false],
+  [15, 0, "", false],
+  [20, 0, "", false],
+  [0, 5, "", false],
+  [20, 5, "", false],
+  [0, 10, "", false],
+  [20, 10, "", false],
+  [5, 10, "", false],
+  [10, 10, "", false],
+  [15, 10, "", false],
+  [0, 15, "", false],
+  [20, 15, "", false],
+  [0, 20, "", false],
+  [20, 20, "", false],
+  [30, 10, "", false],
+  [35, 10, "", false],
+  [40, 10, "", false],
+  [55, 5, "", false],
+  [60, 0, "", false],
+  [60, 5, "", false],
+  [60, 10, "", false],
+  [60, 15, "", false],
+  [55, 20, "", false],
+  [60, 20, "", false],
+  [65, 20, "", false],
+  [85, 0, "", false],
+  [85, 5, "", false],
+  [85, 10, "", false],
+  [85, 15, "", false],
+  [85, 20, "", false],
+  [90, 5, "", false],
+  [95, 10, "", false],
+  [100, 5, "", false],
+  [105, 0, "", false],
+  [105, 5, "", false],
+  [105, 10, "", false],
+  [105, 15, "", false],
+  [105, 20, "", false],
+  [115, 0, "", false],
+  [120, 0, "", false],
+  [125, 0, "", false],
+  [130, 0, "", false],
+  [135, 0, "", false],
+  [115, 5, "", false],
+  [135, 5, "", false],
+  [115, 10, "", false],
+  [135, 10, "", false],
+  [115, 15, "", false],
+  [135, 15, "", false],
+  [115, 20, "", false],
+  [120, 20, "", false],
+  [125, 20, "", false],
+  [130, 20, "", false],
+  [135, 20, "", false],
+  [145, 0, "", false],
+  [150, 0, "", false],
+  [155, 0, "", false],
+  [160, 0, "", false],
+  [165, 0, "", false],
+  [155, 5, "", false],
+  [155, 10, "", false],
+  [155, 15, "", false],
+  [155, 20, "", false],
+  [175, 0, "", false],
+  [180, 0, "", false],
+  [185, 0, "", false],
+  [180, 5, "", false],
+  [180, 10, "", false],
+  [180, 15, "", false],
+  [180, 20, "", false],
+  [175, 20, "", false],
+  [185, 20, "", false],
+  [195, 0, "", false],
+  [200, 0, "", false],
+  [205, 0, "", false],
+  [210, 0, "", false],
+  [215, 0, "", false],
+  [195, 5, "", false],
+  [215, 5, "", false],
+  [195, 10, "", false],
+  [215, 10, "", false],
+  [195, 15, "", false],
+  [215, 15, "", false],
+  [195, 20, "", false],
+  [200, 20, "", false],
+  [205, 20, "", false],
+  [210, 20, "", false],
+  [215, 20, "", false],
+  [225, 0, "", false],
+  [225, 5, "", false],
+  [225, 10, "", false],
+  [225, 15, "", false],
+  [225, 20, "", false],
+  [230, 5, "", false],
+  [235, 10, "", false],
+  [240, 15, "", false],
+  [245, 20, "", false],
+  [245, 15, "", false],
+  [245, 10, "", false],
+  [245, 5, "", false],
+  [245, 0, "", false],
 ];
 
 startLocations.forEach((location) => {
@@ -453,11 +453,11 @@ locations.forEach((a) => {
 });
 
 App.init().then(() => {
-  const svg = $(`#hero`);
-  const pixels: SVGRectElement[] = svg.find(`rect`).toArray() as any;
+  const svg = $("#hero");
+  const pixels: SVGRectElement[] = svg.find("rect").toArray() as any;
   init(pixels);
-  svg.on(`click mouseover`, `rect`, function a() {
-    const pixels: SVGRectElement[] = svg.find(`rect`).toArray() as any;
-    listener(pixels, Number($(this).data(`index`)));
+  svg.on("click mouseover", "rect", function a() {
+    const pixels: SVGRectElement[] = svg.find("rect").toArray() as any;
+    listener(pixels, Number($(this).data("index")));
   });
 });

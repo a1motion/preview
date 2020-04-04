@@ -1,9 +1,9 @@
-App.version = `%VERSION%`;
+App.version = "%VERSION%";
 
 function domLoaded() {
   return (
     //@ts-ignore
-    document.readyState === `complete` && document.readyState !== `loading`
+    document.readyState === "complete" && document.readyState !== "loading"
   );
 }
 
@@ -15,15 +15,15 @@ App.init = function init() {
     if (domLoaded()) {
       resolve();
     } else {
-      document.addEventListener(`DOMContentLoaded`, () => resolve());
+      document.addEventListener("DOMContentLoaded", () => resolve());
     }
   });
 };
 
 App.init().then(() => {
   Sentry.init({
-    dsn: `https://2b095212a1944dc8a8eaffe2af9f7a47@sentry.a1motion.com/4`,
+    dsn: "https://2b095212a1944dc8a8eaffe2af9f7a47@sentry.a1motion.com/4",
     release: App.version,
-    environment: `staging`,
+    environment: "staging",
   });
 });

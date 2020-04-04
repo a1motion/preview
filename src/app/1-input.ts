@@ -11,11 +11,11 @@ function handler(e: any) {
     if (value.length === 0) {
       $(target)
         .parent()
-        .removeClass(`active`);
+        .removeClass("active");
     } else {
       $(target)
         .parent()
-        .addClass(`active`);
+        .addClass("active");
     }
   }, 100);
 }
@@ -26,6 +26,6 @@ App.init().then(() => {
    * Whenever the contents of these change we have to toggle the `active` class on the parent.
    * This will cause the floating label to either activate or deactivate.
    */
-  $(`body`).on(`input`, `label.input-field input`, handler);
-  $(`body`).on(`input propertychange`, `label.input-field textarea`, handler);
+  $("body").on("input", "label.input-field input", handler);
+  $("body").on("input propertychange", "label.input-field textarea", handler);
 });

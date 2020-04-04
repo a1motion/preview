@@ -45,8 +45,8 @@ class SSEClient {
      * Mark the client and keep its location in memory.
      */
     this.location = (req.query.location as string).slice(1);
-    if (this.location === ``) {
-      this.location = `index`;
+    if (this.location === "") {
+      this.location = "index";
     }
 
     this.res = res;
@@ -61,7 +61,7 @@ class SSEClient {
    */
   update(location?: string) {
     if (!location || this.location === location) {
-      this.res.write(`event: update\ndata: ""\n\n`);
+      this.res.write('event: update\ndata: ""\n\n');
     }
   }
 }
@@ -90,20 +90,20 @@ const globalJavascriptAssets: string[] = [];
  */
 const pages: string[] = [];
 
-const cwd = path.join(__dirname, `..`, `src`);
-const buildDir = path.join(__dirname, `..`, `build`);
+const cwd = path.join(__dirname, "..", "src");
+const buildDir = path.join(__dirname, "..", "build");
 
 /**
  * Build out `vender.js`
  */
 const vender = async () => {
-  let files = await globby(`vender/**/*.js`, { cwd });
+  let files = await globby("vender/**/*.js", { cwd });
   files = await readFiles(files);
-  const bundled = files.reduce(joinFiles, ``);
-  const output = await transformJavascript(bundled, `vender.js`, true, false);
-  await fs.promises.writeFile(path.join(buildDir, `vender.js`), output);
-  if (!globalJavascriptAssets.includes(`vender.js`)) {
-    globalJavascriptAssets.push(`vender.js`);
+  const bundled = files.reduce(joinFiles, "");
+  const output = await transformJavascript(bundled, "vender.js", true, false);
+  await fs.promises.writeFile(path.join(buildDir, "vender.js"), output);
+  if (!globalJavascriptAssets.includes("vender.js")) {
+    globalJavascriptAssets.push("vender.js");
   }
 };
 
@@ -111,18 +111,18 @@ const vender = async () => {
  * Build out `app.js`
  */
 const appJS = async () => {
-  let files = (await globby(`app/**/*.ts`, { cwd })).sort((a, b) =>
+  let files = (await globby("app/**/*.ts", { cwd })).sort((a, b) =>
     a.localeCompare(b)
   );
   files = await readFiles(files);
   files = files.map(
     (file) => `!(function(App){${file}})(window.App = window.App || {});`
   );
-  const bundled = files.reduce(joinFiles, ``);
-  const output = await transformJavascript(bundled, `app.js`, true, false);
-  await fs.promises.writeFile(path.join(buildDir, `app.js`), output);
-  if (!globalJavascriptAssets.includes(`app.js`)) {
-    globalJavascriptAssets.push(`app.js`);
+  const bundled = files.reduce(joinFiles, "");
+  const output = await transformJavascript(bundled, "app.js", true, false);
+  await fs.promises.writeFile(path.join(buildDir, "app.js"), output);
+  if (!globalJavascriptAssets.includes("app.js")) {
+    globalJavascriptAssets.push("app.js");
   }
 };
 
@@ -130,8 +130,8 @@ const appJS = async () => {
  * Build out `app.css`
  */
 const appCSS = async () => {
-  const output = await transformCSS(path.join(cwd, `app/app.scss`), true);
-  await fs.promises.writeFile(path.join(buildDir, `app.css`), output);
+  const output = await transformCSS(path.join(cwd, "app/app.scss"), true);
+  await fs.promises.writeFile(path.join(buildDir, "app.css"), output);
 };
 
 function generateNormalScriptTag(fileName: string) {
@@ -152,8 +152,8 @@ const page = (file: string) =>
     }
 
     let data = {};
-    if (await fileExists(path.join(pageDir, `data.json`))) {
-      data = require(path.join(pageDir, `data.json`));
+    if (await fileExists(path.join(pageDir, "data.json"))) {
+      data = require(path.join(pageDir, "data.json"));
     }
 
     let output = nunjuck.render(file, data);
@@ -161,8 +161,8 @@ const page = (file: string) =>
       /<\/body>/g,
       `${globalJavascriptAssets
         .map(generateNormalScriptTag)
-        .map((a, i) => `  ${i === 0 ? `` : `  `}${a}`)
-        .join(`\n`)}\n  </body>`
+        .map((a, i) => `  ${i === 0 ? "" : "  "}${a}`)
+        .join("\n")}\n  </body>`
     );
     if (await fileExists(path.join(pageDir, `${pageName}.ts`))) {
       output = output.replace(
@@ -173,7 +173,7 @@ const page = (file: string) =>
 
     output = output.replace(
       /<\/head>/g,
-      `  ${generateStyleSheetTag(`app.css`)}\n  </head>`
+      `  ${generateStyleSheetTag("app.css")}\n  </head>`
     );
 
     if (await fileExists(path.join(pageDir, `${pageName}.scss`))) {
@@ -195,7 +195,7 @@ const pageJS = (file: string) =>
     const { dir: pageDir, name: pageName } = path.parse(file);
     const pageJavascriptCode = await fs.promises.readFile(
       path.join(pageDir, `${pageName}.ts`),
-      { encoding: `utf-8` }
+      { encoding: "utf-8" }
     );
     const code = await transformJavascript(
       pageJavascriptCode,
@@ -249,41 +249,41 @@ async function main() {
   await appCSS();
 
   chokidar
-    .watch(`app/**/*.ts`, {
+    .watch("app/**/*.ts", {
       cwd,
       ignoreInitial: true,
     })
-    .on(`add`, async () => {
+    .on("add", async () => {
       await appJS();
       updateAllClients();
     })
-    .on(`change`, async () => {
+    .on("change", async () => {
       await appJS();
       updateAllClients();
     });
   chokidar
-    .watch(`vender/**/*.js`, {
+    .watch("vender/**/*.js", {
       cwd,
       ignoreInitial: true,
     })
-    .on(`add`, async () => {
+    .on("add", async () => {
       await vender();
       updateAllClients();
     })
-    .on(`change`, async () => {
+    .on("change", async () => {
       await vender();
       updateAllClients();
     });
   chokidar
-    .watch(`app/**/*.scss`, {
+    .watch("app/**/*.scss", {
       cwd,
       ignoreInitial: true,
     })
-    .on(`add`, async () => {
+    .on("add", async () => {
       await appCSS();
       updateAllClients();
     })
-    .on(`change`, async () => {
+    .on("change", async () => {
       await appCSS();
       updateAllClients();
     });
@@ -308,10 +308,10 @@ async function main() {
    * Then we excute the page builder.
    */
   chokidar
-    .watch(`pages/*/*.njk`, {
+    .watch("pages/*/*.njk", {
       cwd,
     })
-    .on(`add`, async (file) => {
+    .on("add", async (file) => {
       const { name: pageName } = path.parse(file);
       if (!pageHolders[pageName]) {
         pageHolders[pageName] = page(path.join(cwd, file));
@@ -319,7 +319,7 @@ async function main() {
 
       pageHolders[pageName]();
     })
-    .on(`change`, async (file) => {
+    .on("change", async (file) => {
       const { name: pageName } = path.parse(file);
       if (!pageHolders[pageName]) {
         pageHolders[pageName] = page(path.join(cwd, file));
@@ -334,13 +334,13 @@ async function main() {
    * so we just execute all of the page builders we have so far.
    */
   chokidar
-    .watch(`templates/*.njk`, { cwd, ignoreInitial: true })
-    .on(`add`, () => {
+    .watch("templates/*.njk", { cwd, ignoreInitial: true })
+    .on("add", () => {
       for (const handler of Object.values(pageHolders)) {
         handler();
       }
     })
-    .on(`change`, () => {
+    .on("change", () => {
       for (const handler of Object.values(pageHolders)) {
         handler();
       }
@@ -353,10 +353,10 @@ async function main() {
 
   const pageJSHolders: { [key: string]: any } = {};
   chokidar
-    .watch(`pages/*/*.ts`, {
+    .watch("pages/*/*.ts", {
       cwd,
     })
-    .on(`add`, async (file) => {
+    .on("add", async (file) => {
       const { name: pageName } = path.parse(file);
       if (!pageJSHolders[pageName]) {
         pageJSHolders[pageName] = pageJS(path.join(cwd, file));
@@ -364,7 +364,7 @@ async function main() {
 
       pageJSHolders[pageName]();
     })
-    .on(`change`, async (file) => {
+    .on("change", async (file) => {
       const { name: pageName } = path.parse(file);
       if (!pageJSHolders[pageName]) {
         pageJSHolders[pageName] = pageJS(path.join(cwd, file));
@@ -374,10 +374,10 @@ async function main() {
     });
   const pageCSSHolders: { [key: string]: any } = {};
   chokidar
-    .watch(`pages/*/*.scss`, {
+    .watch("pages/*/*.scss", {
       cwd,
     })
-    .on(`add`, async (file) => {
+    .on("add", async (file) => {
       const { name: pageName } = path.parse(file);
       if (!pageCSSHolders[pageName]) {
         pageCSSHolders[pageName] = pageCSS(path.join(cwd, file));
@@ -385,7 +385,7 @@ async function main() {
 
       pageCSSHolders[pageName]();
     })
-    .on(`change`, async (file) => {
+    .on("change", async (file) => {
       const { name: pageName } = path.parse(file);
       if (!pageCSSHolders[pageName]) {
         pageCSSHolders[pageName] = pageCSS(path.join(cwd, file));
@@ -405,18 +405,18 @@ async function main() {
    * This script, which is defined above as `liveReloadable`, connects to this server, and waits for
    * instructions to refresh the page.
    */
-  app.get(`*`, async (req, res, next) => {
-    const url = req.url === `/` ? `index` : req.url.slice(1);
+  app.get("*", async (req, res, next) => {
+    const url = req.url === "/" ? "index" : req.url.slice(1);
     if (pages.includes(url)) {
       let page = await fs.promises.readFile(
         path.join(buildDir, `${url}.html`),
-        `utf-8`
+        "utf-8"
       );
       page = page.replace(
         /<\/body>/g,
         `<script>(${liveReloadable.toString()})()</script></body>`
       );
-      return res.type(`html`).send(page);
+      return res.type("html").send(page);
     }
 
     return next();
@@ -435,7 +435,7 @@ async function main() {
    * connect back to this server using Server-Sent Events.
    *
    */
-  app.get(`/_sse`, (req, res) => {
+  app.get("/_sse", (req, res) => {
     /**
      * Wrap the client in a SEEClient class.
      */
@@ -444,8 +444,8 @@ async function main() {
      * Set the headers for this request.
      */
     res.status(200).set({
-      Connection: `keep-alive`,
-      "Content-Type": `text/event-stream`,
+      Connection: "keep-alive",
+      "Content-Type": "text/event-stream",
     });
     /**
      * Flush (aka write) the headers to the client.
@@ -460,7 +460,7 @@ async function main() {
      * Whenever the client disconnects, for any reason,
      * we remove them from our set of clients.
      */
-    res.on(`finish`, () => {
+    res.on("finish", () => {
       clients.delete(client);
     });
   });

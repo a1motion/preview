@@ -14,12 +14,12 @@ import cssnano from "cssnano";
 import sass from "node-sass";
 import prettier from "prettier";
 
-const VERSION = execSync(`git rev-parse --short HEAD`)
+const VERSION = execSync("git rev-parse --short HEAD")
   .toString()
   .trim();
 
-const cwd = path.join(__dirname, `..`, `src`);
-const buildDir = path.join(__dirname, `..`, `build`);
+const cwd = path.join(__dirname, "..", "src");
+const buildDir = path.join(__dirname, "..", "build");
 
 /**
  * This function is used as the `[].reduce` handler, it will take an
@@ -31,7 +31,7 @@ export function joinFiles(code: string, mod: string): string {
 }
 
 console.log();
-const spinner = ora(`Loading`).start();
+const spinner = ora("Loading").start();
 
 /**
  * The babel options used to pass to `@babel/preset-env`,
@@ -44,7 +44,7 @@ const babelEnvOptions = {
     },
   },
   old: {
-    targets: `>0.2%, ie >= 9`,
+    targets: ">0.2%, ie >= 9",
   },
 };
 
@@ -56,10 +56,10 @@ const babelEnvOptions = {
  */
 export async function babel(code: string, fileName: string, modern?: boolean) {
   const a = await transformAsync(code, {
-    filename: fileName.replace(/\.js$/, `.ts`),
+    filename: fileName.replace(/\.js$/, ".ts"),
     presets: [
-      [`@babel/preset-env`, babelEnvOptions[modern ? `modern` : `old`]],
-      `@babel/preset-typescript`,
+      ["@babel/preset-env", babelEnvOptions[modern ? "modern" : "old"]],
+      "@babel/preset-typescript",
     ],
   });
   return a!.code!;
@@ -80,7 +80,7 @@ function minify(code: string, modern?: boolean) {
     },
     output: {
       ecma: modern ? 2015 : 5,
-      comments: `some`,
+      comments: "some",
     },
     module: modern,
   }).code!;
@@ -101,7 +101,7 @@ export function readFiles(
       .map((file) => path.join(cwd, file))
       .map((file) =>
         fs.promises
-          .readFile(file, { encoding: `utf-8` })
+          .readFile(file, { encoding: "utf-8" })
           .then((code) =>
             withFileNameComment
               ? `// file: ${path.relative(cwd, file)}\n${code}`
@@ -122,7 +122,7 @@ export async function transformJavascript(
   modern: boolean
 ) {
   spinner.text = `[build] [tranform] [${
-    modern ? `modern` : `legacy`
+    modern ? "modern" : "legacy"
   }] ${fileName}`;
   let output = await babel(code, fileName, modern);
   if (!unpublished) {
@@ -130,7 +130,7 @@ export async function transformJavascript(
   }
 
   spinner.text = `[build] [tranform] [${
-    modern ? `modern` : `legacy`
+    modern ? "modern" : "legacy"
   }] ${fileName}`;
   return output;
 }
@@ -153,7 +153,7 @@ export async function transformCSS(
     sass.render(
       {
         file: fileName,
-        outputStyle: `expanded`,
+        outputStyle: "expanded",
       },
       (err, result) => {
         if (err) {
@@ -164,14 +164,14 @@ export async function transformCSS(
               postcssFlexbugsFixes(),
               postcssPresetEnv({
                 autoprefixer: {
-                  flexbox: `no-2009`,
+                  flexbox: "no-2009",
                 },
                 stage: 2,
                 browsers: babelEnvOptions.old.targets,
               }),
               !unpublished &&
                 cssnano({
-                  preset: `default`,
+                  preset: "default",
                 }),
             ].filter(Boolean)
           )
@@ -192,30 +192,30 @@ export async function transformCSS(
  * In the unpublished format, this will also prettify the output.
  */
 export async function vender(unpublished: boolean, modern: boolean) {
-  spinner.text = `[build] [${modern ? `modern` : `legacy`}] [vender]`;
-  let files = await globby(`vender/**/*.js`, { cwd });
+  spinner.text = `[build] [${modern ? "modern" : "legacy"}] [vender]`;
+  let files = await globby("vender/**/*.js", { cwd });
   files = await readFiles(files);
   const bundled = files.reduce(
     joinFiles,
-    `// https://github.com/a1motion/preview`
+    "// https://github.com/a1motion/preview"
   );
   const output = await transformJavascript(
     bundled,
-    `vender.js`,
+    "vender.js",
     unpublished,
     modern
   );
 
   let filename = `vender-${crypto
-    .createHash(`sha1`)
+    .createHash("sha1")
     .update(output)
-    .digest(`hex`)
+    .digest("hex")
     .slice(0, 8)}.js`;
   filename = path.join(buildDir, filename);
 
   await fs.promises.writeFile(
     filename,
-    unpublished ? prettier.format(output, { parser: `babel` }) : output
+    unpublished ? prettier.format(output, { parser: "babel" }) : output
   );
   return filename;
 }
@@ -226,8 +226,8 @@ export async function vender(unpublished: boolean, modern: boolean) {
  * In the unpublished format, this will also prettify the output.
  */
 export async function app(unpublished: boolean, modern: boolean) {
-  spinner.text = `[build] [${modern ? `modern` : `legacy`}] [app]`;
-  let files = (await globby(`app/**/*.ts`, { cwd })).sort((a, b) =>
+  spinner.text = `[build] [${modern ? "modern" : "legacy"}] [app]`;
+  let files = (await globby("app/**/*.ts", { cwd })).sort((a, b) =>
     a.localeCompare(b)
   );
   files = await readFiles(files);
@@ -242,8 +242,8 @@ export async function app(unpublished: boolean, modern: boolean) {
    * Bundle each of the app files into a single file, adding a comment header.
    */
   const bundled = files
-    .reduce((a, b) => `${a}\n${b}`, `// https://github.com/a1motion/preview`)
-    .replace(`%VERSION%`, VERSION);
+    .reduce((a, b) => `${a}\n${b}`, "// https://github.com/a1motion/preview")
+    .replace("%VERSION%", VERSION);
 
   /**
    * Transform the bundled javascript with babel
@@ -251,21 +251,21 @@ export async function app(unpublished: boolean, modern: boolean) {
    */
   const output = await transformJavascript(
     bundled,
-    `app.js`,
+    "app.js",
     unpublished,
     modern
   );
 
   let filename = `app-${crypto
-    .createHash(`sha1`)
+    .createHash("sha1")
     .update(output)
-    .digest(`hex`)
+    .digest("hex")
     .slice(0, 8)}.js`;
   filename = path.join(buildDir, filename);
 
   await fs.promises.writeFile(
     filename,
-    unpublished ? prettier.format(output, { parser: `babel` }) : output
+    unpublished ? prettier.format(output, { parser: "babel" }) : output
   );
   return filename;
 }
@@ -274,30 +274,30 @@ export async function app(unpublished: boolean, modern: boolean) {
  * Build out the app scss file.
  */
 export async function appCss(unpublished: boolean) {
-  spinner.text = `[build] [css] [app]`;
+  spinner.text = "[build] [css] [app]";
   /**
    * We run our app.scss file through the scss
    * compiler and add a comment header to the result.
    */
   const output =
-    `/* https://github.com/a1motion/preview */\n` +
-    (await transformCSS(path.join(cwd, `app/app.scss`), unpublished));
+    "/* https://github.com/a1motion/preview */\n" +
+    (await transformCSS(path.join(cwd, "app/app.scss"), unpublished));
   let filename = `app-${crypto
-    .createHash(`sha1`)
+    .createHash("sha1")
     .update(output)
-    .digest(`hex`)
+    .digest("hex")
     .slice(0, 8)}.css`;
   filename = path.join(buildDir, filename);
 
   await fs.promises.writeFile(
     filename,
-    unpublished ? prettier.format(output, { parser: `css` }) : output
+    unpublished ? prettier.format(output, { parser: "css" }) : output
   );
   return filename;
 }
 
 export async function build(unpublished: boolean, modern: boolean) {
-  spinner.text = `[build] [${modern ? `modern` : `legacy`}]`;
+  spinner.text = `[build] [${modern ? "modern" : "legacy"}]`;
   const venderFileName = await vender(unpublished, modern);
   const appFileName = await app(unpublished, modern);
   return { venderFileName, appFileName };
@@ -348,16 +348,16 @@ async function pages(
     css: ThenArg<ReturnType<typeof appCss>>;
   }
 ) {
-  spinner.text = `[build] [pages]`;
-  const files = (await globby(`pages/*/*.njk`, { cwd })).map((file) =>
+  spinner.text = "[build] [pages]";
+  const files = (await globby("pages/*/*.njk", { cwd })).map((file) =>
     path.join(cwd, file)
   );
   for (const file of files) {
     const { dir: pageDir, name: pageName } = path.parse(file);
     spinner.text = `[build] [pages] [${pageName}]`;
     let data = {};
-    if (await fileExists(path.join(pageDir, `data.json`))) {
-      data = require(path.join(pageDir, `data.json`));
+    if (await fileExists(path.join(pageDir, "data.json"))) {
+      data = require(path.join(pageDir, "data.json"));
     }
 
     let output = nunjuck.render(file, data);
@@ -366,9 +366,9 @@ async function pages(
     if (await fileExists(path.join(pageDir, `${pageName}.ts`))) {
       spinner.text = `[build] [pages] [${pageName}] [js]`;
       const pageJavascriptCode =
-        `// https://github.com/a1motion/preview\n` +
+        "// https://github.com/a1motion/preview\n" +
         (await fs.promises.readFile(path.join(pageDir, `${pageName}.ts`), {
-          encoding: `utf-8`,
+          encoding: "utf-8",
         }));
       const builds = await Promise.all([
         transformJavascript(
@@ -387,14 +387,14 @@ async function pages(
       pageJavascript = await Promise.all(
         builds.map(async (code) => {
           let filename = `${pageName}-${crypto
-            .createHash(`sha1`)
+            .createHash("sha1")
             .update(code)
-            .digest(`hex`)
+            .digest("hex")
             .slice(0, 8)}.js`;
           filename = path.join(buildDir, filename);
           await fs.promises.writeFile(
             filename,
-            unpublished ? prettier.format(code, { parser: `babel` }) : code
+            unpublished ? prettier.format(code, { parser: "babel" }) : code
           );
           return filename;
         })
@@ -405,21 +405,21 @@ async function pages(
     if (await fileExists(path.join(pageDir, `${pageName}.scss`))) {
       spinner.text = `[build] [pages] [${pageName}] [css]`;
       const output =
-        `/* https://github.com/a1motion/preview */\n` +
+        "/* https://github.com/a1motion/preview */\n" +
         (await transformCSS(
           path.join(pageDir, `${pageName}.scss`),
           unpublished
         ));
       let filename = `${pageName}-${crypto
-        .createHash(`sha1`)
+        .createHash("sha1")
         .update(output)
-        .digest(`hex`)
+        .digest("hex")
         .slice(0, 8)}.css`;
       filename = path.join(buildDir, filename);
 
       await fs.promises.writeFile(
         filename,
-        unpublished ? prettier.format(output, { parser: `css` }) : output
+        unpublished ? prettier.format(output, { parser: "css" }) : output
       );
       pageCss = filename;
     }
@@ -443,8 +443,8 @@ async function pages(
     output = output.replace(
       /<\/body>/g,
       `${scripts
-        .map((a, i) => `  ${i === 0 ? `` : `  `}${a}`)
-        .join(`\n`)}\n  </body>`
+        .map((a, i) => `  ${i === 0 ? "" : "  "}${a}`)
+        .join("\n")}\n  </body>`
     );
     output = output.replace(
       /<\/head>/g,
@@ -459,12 +459,12 @@ async function pages(
 
     await fs.promises.writeFile(
       path.join(buildDir, `${pageName}.html`),
-      unpublished ? prettier.format(output, { parser: `html` }) : output
+      unpublished ? prettier.format(output, { parser: "html" }) : output
     );
     spinner.text = `[build] [pages] [${pageName}] done`;
   }
 
-  spinner.text = `[build] [pages] done`;
+  spinner.text = "[build] [pages] done";
 }
 
 async function main(unpublished: boolean) {
@@ -481,5 +481,5 @@ async function main(unpublished: boolean) {
 }
 
 if (require.main === module) {
-  main(!process.argv.includes(`--production`));
+  main(!process.argv.includes("--production"));
 }
