@@ -208,6 +208,17 @@ export async function transformSCSS(
 export async function vender(unpublished: boolean, modern: boolean) {
   spinner.text = `[build] [${modern ? "modern" : "legacy"}] [vender]`;
   let files = await globby("vender/**/*.js", { cwd });
+  files = files.sort((a, b) => {
+    if (a === "vender/jquery.js") {
+      return -1;
+    }
+
+    if (b === "vender/jquery.js") {
+      return 1;
+    }
+
+    return 0;
+  });
   files = await readFiles(files);
   const bundled = files.reduce(
     joinFiles,
