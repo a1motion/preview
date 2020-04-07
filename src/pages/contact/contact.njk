@@ -14,6 +14,16 @@
           <h3 class="title">Contact</h3>
           {{ field('name', label="Full Name") }}
           {{ field('email', label="Email", type="email") }}
+          <div class="form-item">
+            <div class="ui-selectmenu-wrapper">
+              <select name="type" id="type">
+                <option value="inquiry">Inquiry</option>
+                <option value="quote">Request Quest</option>
+                <option value="service">Request Service</option>
+              </select>
+              <label for="type">Message Type</label>
+            </div>
+          </div>
           {{ textarea('message', label="Message") }}
           <div class="form-item">
             {{ button("Submit", primary="true") }}

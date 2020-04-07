@@ -10,6 +10,7 @@ import {
   joinFiles,
   fileExists,
   transformCSS,
+  transformSCSS,
 } from "./build";
 
 /**
@@ -98,13 +99,30 @@ const buildDir = path.join(__dirname, "..", "build");
  */
 const vender = async () => {
   let files = await globby("vender/**/*.js", { cwd });
+  files = files.sort((a, b) => {
+    if (a === "vender/jquery.js") {
+      return -1;
+    }
+
+    if (b === "vender/jquery.js") {
+      return 1;
+    }
+
+    return 0;
+  });
   files = await readFiles(files);
-  const bundled = files.reduce(joinFiles, "");
-  const output = await transformJavascript(bundled, "vender.js", true, false);
+  let bundled = files.reduce(joinFiles, "");
+  let output = await transformJavascript(bundled, "vender.js", false, true);
   await fs.promises.writeFile(path.join(buildDir, "vender.js"), output);
   if (!globalJavascriptAssets.includes("vender.js")) {
     globalJavascriptAssets.push("vender.js");
   }
+
+  files = await globby("vender/**/*.css", { cwd });
+  files = await readFiles(files, false);
+  bundled = files.reduce((a, b) => a + "\n" + b, "");
+  output = await transformCSS(bundled, "vender.css", false);
+  await fs.promises.writeFile(path.join(buildDir, "vender.css"), output);
 };
 
 /**
@@ -130,7 +148,7 @@ const appJS = async () => {
  * Build out `app.css`
  */
 const appCSS = async () => {
-  const output = await transformCSS(path.join(cwd, "app/app.scss"), true);
+  const output = await transformSCSS(path.join(cwd, "app/app.scss"), true);
   await fs.promises.writeFile(path.join(buildDir, "app.css"), output);
 };
 
@@ -171,10 +189,12 @@ const page = (file: string) =>
       );
     }
 
-    output = output.replace(
-      /<\/head>/g,
-      `  ${generateStyleSheetTag("app.css")}\n  </head>`
-    );
+    output = output
+      .replace(
+        /<\/head>/g,
+        `  ${generateStyleSheetTag("vender.css")}\n  </head>`
+      )
+      .replace(/<\/head>/g, `  ${generateStyleSheetTag("app.css")}\n  </head>`);
 
     if (await fileExists(path.join(pageDir, `${pageName}.scss`))) {
       output = output.replace(
@@ -210,7 +230,7 @@ const pageJS = (file: string) =>
 const pageCSS = (file: string) =>
   debounce(async () => {
     const { dir: pageDir, name: pageName } = path.parse(file);
-    const output = await transformCSS(
+    const output = await transformSCSS(
       path.join(pageDir, `${pageName}.scss`),
       true
     );
@@ -427,6 +447,8 @@ async function main() {
    * in this instance we serve the `./build` directory.
    */
   app.use(express.static(buildDir));
+
+  app.use(express.static(path.join(__dirname, "..", "static")));
 
   /**
    * This is where all of the live reloadable stuff starts.

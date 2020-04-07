@@ -100,4 +100,18 @@ App.init().then(() => {
       e.preventDefault();
     }
   });
+  //@ts-ignore
+  $("#type").selectmenu({
+    width: false,
+    open(event: any) {
+      $(event.target)
+        .parent()
+        .addClass("open");
+    },
+    close(event: any) {
+      $(event.target)
+        .parent()
+        .removeClass("open");
+    },
+  });
 });

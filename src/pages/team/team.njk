@@ -14,7 +14,9 @@
             <div class="header">
               <div class="image">
                 <span>
-                  <img src="https://rewarecdn.a1motion.com/dev/{{ item.img }}.png?width=128" alt="{{item.name}}">
+                  <a href="https://rewarecdn.a1motion.com/dev/{{ item.img }}.png?width=700" data-fancybox data-caption="{{item.name}}">
+                    <img src="https://rewarecdn.a1motion.com/dev/{{ item.img }}.png?width=128" alt="{{item.name}}">
+                  </a>
                 </span>
               </div>
               <div class="details">
@@ -27,7 +29,7 @@
               </div>
             </div>
             <p class="body">
-            {{item.description}}
+              {{item.description}}
             </p>
           </div>
         </div>

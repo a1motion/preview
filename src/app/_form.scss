@@ -24,6 +24,94 @@
   }
 }
 
+.ui-selectmenu-wrapper {
+  position: relative;
+  display: inline-block;
+  display: block;
+  width: 100%;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  transition: all cubic-bezier(0.645, 0.045, 0.355, 1) 0.25s;
+  border-radius: 4px;
+  label {
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    font-weight: 800;
+    position: absolute;
+    top: 2px;
+    left: 12px;
+    transform: translateY(25%);
+    transition: all cubic-bezier(0.645, 0.045, 0.355, 1) 0.25s;
+    background-color: white;
+    padding: 0 4px;
+    opacity: 1;
+    transform: translateY(-11px);
+  }
+  .ui-selectmenu-button-open ~ label {
+    color: $primary-color-600;
+  }
+  &.open {
+    border-color: $primary-color-400;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .ui-selectmenu-wrapper {
+    background-color: #202020;
+    color: #fff;
+    .ui-selectmenu-button-open ~ label {
+      color: lighten($primary-color, 25%);
+    }
+    label {
+      background-color: #202020;
+      color: #fff;
+    }
+  }
+  .ui-selectmenu-button.ui-button {
+    color: #fff;
+  }
+  .ui-selectmenu-icon.ui-icon {
+    filter: brightness(0) invert(1);
+  }
+  .ui-selectmenu-menu {
+    .ui-widget-content {
+      background-color: #202020;
+    }
+    .ui-widget.ui-widget-content {
+      border-color: lighten($primary-color, 25%);
+    }
+    .ui-menu .ui-menu-item-wrapper {
+      color: #fff;
+    }
+  }
+}
+
+.ui-selectmenu-button.ui-button {
+  position: relative;
+  display: inline-block;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  &:focus {
+    outline: none;
+  }
+  & .ui-selectmenu-text {
+    height: 52px;
+    line-height: 52px;
+    padding: 0 16px;
+    margin: 0;
+  }
+  .ui-selectmenu-icon.ui-icon {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+  }
+}
+
 .input-field {
   position: relative;
   display: inline-block;
@@ -72,7 +160,7 @@
     }
   }
   span {
-    color: $primary-color;
+    color: rgba(0, 0, 0, 0.65);
     font-size: 14px;
     font-weight: 800;
     position: absolute;

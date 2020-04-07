@@ -61,6 +61,7 @@ export async function babel(code: string, fileName: string, modern?: boolean) {
       ["@babel/preset-env", babelEnvOptions[modern ? "modern" : "old"]],
       "@babel/preset-typescript",
     ],
+    plugins: ["@babel/plugin-proposal-class-properties"],
   });
   return a!.code!;
 }
@@ -145,6 +146,37 @@ export async function transformJavascript(
  * we also the css through `cssnano` which will minify the css ouput.
  */
 export async function transformCSS(
+  css: string,
+  fileName: string,
+  unpublished: boolean
+): Promise<string> {
+  return new Promise((resolve) => {
+    spinner.text = `[build] [tranform] [css] ${fileName}`;
+    postcss(
+      [
+        postcssFlexbugsFixes(),
+        postcssPresetEnv({
+          autoprefixer: {
+            flexbox: "no-2009",
+          },
+          stage: 2,
+          browsers: babelEnvOptions.old.targets,
+        }),
+        !unpublished &&
+          cssnano({
+            preset: "default",
+          }),
+      ].filter(Boolean)
+    )
+      .process(css, {
+        from: fileName,
+      })
+      .then((r) => r.css)
+      .then(resolve);
+  });
+}
+
+export async function transformSCSS(
   fileName: string,
   unpublished: boolean
 ): Promise<string> {
@@ -159,27 +191,9 @@ export async function transformCSS(
         if (err) {
           reject(err);
         } else {
-          postcss(
-            [
-              postcssFlexbugsFixes(),
-              postcssPresetEnv({
-                autoprefixer: {
-                  flexbox: "no-2009",
-                },
-                stage: 2,
-                browsers: babelEnvOptions.old.targets,
-              }),
-              !unpublished &&
-                cssnano({
-                  preset: "default",
-                }),
-            ].filter(Boolean)
-          )
-            .process(result.css, {
-              from: fileName,
-            })
-            .then((r) => r.css)
-            .then(resolve);
+          transformCSS(result.css.toString(), fileName, unpublished).then(
+            resolve
+          );
         }
       }
     );
@@ -216,6 +230,28 @@ export async function vender(unpublished: boolean, modern: boolean) {
   await fs.promises.writeFile(
     filename,
     unpublished ? prettier.format(output, { parser: "babel" }) : output
+  );
+  return filename;
+}
+
+export async function venderCss(unpublished: boolean) {
+  spinner.text = "[build] [css] [vender]";
+  let files = await globby("vender/**/*.css", { cwd });
+  files = await readFiles(files, false);
+  const bundled = files.reduce((a, b) => a + "\n" + b, "");
+  const output =
+    "/* https://github.com/a1motion/preview */\n" +
+    (await transformCSS(bundled, "vender.css", unpublished));
+  let filename = `vender-${crypto
+    .createHash("sha1")
+    .update(output)
+    .digest("hex")
+    .slice(0, 8)}.css`;
+  filename = path.join(buildDir, filename);
+
+  await fs.promises.writeFile(
+    filename,
+    unpublished ? prettier.format(output, { parser: "css" }) : output
   );
   return filename;
 }
@@ -281,7 +317,7 @@ export async function appCss(unpublished: boolean) {
    */
   const output =
     "/* https://github.com/a1motion/preview */\n" +
-    (await transformCSS(path.join(cwd, "app/app.scss"), unpublished));
+    (await transformSCSS(path.join(cwd, "app/app.scss"), unpublished));
   let filename = `app-${crypto
     .createHash("sha1")
     .update(output)
@@ -298,7 +334,7 @@ export async function appCss(unpublished: boolean) {
 
 export async function build(unpublished: boolean, modern: boolean) {
   spinner.text = `[build] [${modern ? "modern" : "legacy"}]`;
-  const venderFileName = await vender(unpublished, modern);
+  const venderFileName = await vender(true, modern);
   const appFileName = await app(unpublished, modern);
   return { venderFileName, appFileName };
 }
@@ -345,7 +381,7 @@ async function pages(
   assets: {
     oldBuild: ThenArg<ReturnType<typeof build>>;
     modernBuild: ThenArg<ReturnType<typeof build>>;
-    css: ThenArg<ReturnType<typeof appCss>>;
+    css: ThenArg<ReturnType<typeof build>>;
   }
 ) {
   spinner.text = "[build] [pages]";
@@ -406,7 +442,7 @@ async function pages(
       spinner.text = `[build] [pages] [${pageName}] [css]`;
       const output =
         "/* https://github.com/a1motion/preview */\n" +
-        (await transformCSS(
+        (await transformSCSS(
           path.join(pageDir, `${pageName}.scss`),
           unpublished
         ));
@@ -446,10 +482,15 @@ async function pages(
         .map((a, i) => `  ${i === 0 ? "" : "  "}${a}`)
         .join("\n")}\n  </body>`
     );
-    output = output.replace(
-      /<\/head>/g,
-      `  ${generateStyleSheetTag(assets.css)}\n  </head>`
-    );
+    output = output
+      .replace(
+        /<\/head>/g,
+        `  ${generateStyleSheetTag(assets.css.venderFileName)}\n  </head>`
+      )
+      .replace(
+        /<\/head>/g,
+        `  ${generateStyleSheetTag(assets.css.appFileName)}\n  </head>`
+      );
     if (pageCss) {
       output = output.replace(
         /<\/head>/g,
@@ -474,8 +515,13 @@ async function main(unpublished: boolean) {
     build(unpublished, false),
     build(unpublished, true),
   ]);
-  const css = await appCss(unpublished);
-  await pages(unpublished, { oldBuild, modernBuild, css });
+  const appcss = await appCss(unpublished);
+  const vendercss = await venderCss(unpublished);
+  await pages(unpublished, {
+    oldBuild,
+    modernBuild,
+    css: { appFileName: appcss, venderFileName: vendercss },
+  });
   spinner.stop();
   console.log();
 }
