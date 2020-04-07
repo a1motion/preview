@@ -38,7 +38,7 @@ function contentType(src: string, ext?: string) {
 }
 
 const deploy = async () => {
-  const files = await getFilesInDir("./build");
+  let files = await getFilesInDir("./build");
   await Promise.all(
     files.map(async (file: any) => {
       let Key = path.relative("./build", file);
@@ -51,6 +51,27 @@ const deploy = async () => {
         Key === "index.html"
           ? "no-cache, no-store, must-revalidate"
           : "public, max-age=31536000";
+      const Bucket = "public.a1motion.com";
+      Key = Key.replace(/\\/g, "/");
+      Key = `preview/${Key}`;
+      return s3
+        .putObject({
+          Body,
+          CacheControl,
+          Key,
+          Bucket,
+          ContentLength: Body.length,
+          ContentType: contentType(file),
+        })
+        .promise();
+    })
+  );
+  files = await getFilesInDir("./static");
+  await Promise.all(
+    files.map(async (file: any) => {
+      let Key = path.relative("./static", file);
+      const Body = await fs.readFile(file);
+      const CacheControl = "public, max-age=31536000";
       const Bucket = "public.a1motion.com";
       Key = Key.replace(/\\/g, "/");
       Key = `preview/${Key}`;
