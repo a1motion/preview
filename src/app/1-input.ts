@@ -20,6 +20,8 @@ function handler(e: any) {
   }, 100);
 }
 
+declare let autosize: any;
+
 App.init().then(() => {
   /**
    * Bind to the input events for all custom inputs and textareas.
@@ -28,4 +30,5 @@ App.init().then(() => {
    */
   $("body").on("input", "label.input-field input", handler);
   $("body").on("input propertychange", "label.input-field textarea", handler);
+  autosize($("textarea"));
 });
