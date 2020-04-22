@@ -1,0 +1,46 @@
+{
+  "team": [
+    {
+      "name": "Jason Brazington",
+      "position": "President",
+      "img": "e070bcaf410b35bb38e636dbe899804cf0900b31d771bc64b50b2cf39fe0c5e6",
+      "description": "Jason was trained by the Navy to repair and program Combat Control Systems on board nuclear submarines. He continued his career in electronics evolving into complex industrial automation. Not much difference really, pneumatics, hydraulics, motors, and computers all working together to achieve a goal."
+    },
+    {
+      "name": "Bennett Richardson",
+      "position": "Vice President",
+      "img": "6211c7cf40943679090260fa286dd3b291a1c7f4557c8b0ee29499308d5d0b99",
+      "description": "Bennett is an extremely talented and skilled electrician. He has worked as city inspector and knows the codes. Bennet takes pride in the quality of work he performes, and it shows. you would be hard pressed to find a friendlier person with strong morals and work ethics that exceed many around him."
+    },
+    {
+      "name": "Tracey Brazington",
+      "position": "Secretary",
+      "img": "31828b088d71cfce2c4785ba04dc3febc2c9d27b507c55117de407ace1c1e62b",
+      "description": "Although Secretary is her official title, Tracey is affectionately called Wifetary by her husband. Tracey has spent many years working in the school system and brings her organizational skills and talents to A-1 Motion. She keeps us straight, helps us stayed focused, and insures we perform efficiently."
+    },
+    {
+      "name": "Brad Fuquay",
+      "position": "Automation Specialist",
+      "img": "428beaf38c26dcb8dd7bb75fdf8eb9f1cbd2e11f1972496ad97358438be3d1d3",
+      "description": "Brad has been in the automation business for more than 18 years. He has strengthened his talents with heavy hitter companies like Miller Coors, Ball Corporation, Sapa Hydro, and Glen Raven. Brad is very efficient with Allen Bradly PLC's and software. We love the tenacity and persistances Brad brings to our team."
+    },
+    {
+      "name": "Connor Love",
+      "position": "Software Engineer",
+      "img": "dd93c70dfc9837da5d2b1af166a88ffd35f5665a24d7a1d8a73ca7d31bfd8ba5",
+      "description": "Connor is a self taught and motivated software engineer that makes complex challenges seem like a walk in the park. Connor is currently enrolled at UNC Charlotte studying Computer Science to enhance his skills."
+    },
+    {
+      "name": "Chris Brazington",
+      "position": "Computer Technician",
+      "img": "8340418bb63efba8dffabff21a852049fed7e6cce8c86dff8ac50a22d2c552f3",
+      "description": "Chris is gifted with computers and electronics. When tasked with building a pc, Chris likes to make sure he is using the best components within the constraints of a budget. Please do not engage Chris in a political debate, you will not win."
+    },
+    {
+      "name": "Michael Adam",
+      "position": "Industrial Technician",
+      "img": "f2f2ef470676476a2e6b41ef3e1eed97cafe350b28a7767e7d661dc53b4e3449",
+      "description": "Michael’s background with the US Marine Core has driven him with a true “Semper Fidelis” Always Faithful ethic in both work and life. His military training has afforded Michael with a very strong troubleshooting persona. Michael is also MHSA Certified. Michael’s personality is a rarity and is the type of person that has many interests and enjoys sharing and discussing with his colleagues."
+    }
+  ]
+}

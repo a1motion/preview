@@ -1,0 +1,10 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@a1motion/serverless": "^0.1.4",
+    "typescript": "^3.8.3"
+  }
+}

@@ -3,3 +3,4 @@ src/vender/
 build/
 *.d.ts
 !src/vender/autosize.js
+server/out/

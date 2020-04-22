@@ -7,33 +7,8 @@
 {% block main %}
   <div class="container section">
     <h2>The Team</h2>
-    <div class="team-row">
-      {% for item in team %}
-        <div class="team-row-item">
-          <div class="person-card shadow-md">
-            <div class="header">
-              <div class="image">
-                <span>
-                  <a href="https://rewarecdn.a1motion.com/dev/{{ item.img }}.png?width=700" data-fancybox data-caption="{{item.name}}">
-                    <img src="https://rewarecdn.a1motion.com/dev/{{ item.img }}.png?width=128" alt="{{item.name}}">
-                  </a>
-                </span>
-              </div>
-              <div class="details">
-                <div class="title">
-                  {{item.name}}
-                </div>
-                <div class="description">
-                  {{item.position}}
-                </div>
-              </div>
-            </div>
-            <p class="body">
-              {{item.description}}
-            </p>
-          </div>
-        </div>
-      {% endfor %}
+    <div class="team-row" id="team-members">
+
     </div>
   </div>
 {% endblock %}

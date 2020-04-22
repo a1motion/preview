@@ -42,6 +42,7 @@ const babelEnvOptions = {
     targets: {
       esmodules: true,
     },
+    loose: true,
   },
   old: {
     targets: ">0.2%, ie >= 9",
@@ -77,10 +78,10 @@ function minify(code: string, modern?: boolean) {
       ecma: 8,
     },
     compress: {
-      ecma: modern ? 2015 : 5,
+      ecma: modern ? 2016 : 5,
     },
     output: {
-      ecma: modern ? 2015 : 5,
+      ecma: modern ? 2016 : 5,
       comments: "some",
     },
     module: modern,
@@ -289,19 +290,16 @@ export async function app(unpublished: boolean, modern: boolean) {
    * Bundle each of the app files into a single file, adding a comment header.
    */
   const bundled = files
-    .reduce((a, b) => `${a}\n${b}`, "// https://github.com/a1motion/preview")
+    .reduce((a, b) => `${a}\n${b}`, "")
     .replace("%VERSION%", VERSION);
 
   /**
    * Transform the bundled javascript with babel
    * and minify if we're in production mod.
    */
-  const output = await transformJavascript(
-    bundled,
-    "app.js",
-    unpublished,
-    modern
-  );
+  const output =
+    "// https://github.com/a1motion/preview" +
+    (await transformJavascript(bundled, "app.js", unpublished, modern));
 
   let filename = `app-${crypto
     .createHash("sha1")

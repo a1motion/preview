@@ -90,15 +90,37 @@ function checkForm() {
     messageParent.removeClass("has-error");
   }
 
-  return !hasError;
+  if (hasError) {
+    return false;
+  }
+
+  const type = $("#type").val();
+
+  return { name, email, message, type };
 }
 
 App.init().then(() => {
   const form = $("#contact-form");
-  form.on("submit", (e) => {
-    if (!checkForm()) {
-      e.preventDefault();
+  form.on("submit", async (e) => {
+    e.preventDefault();
+    const results = checkForm();
+    if (!results) {
+      return;
     }
+
+    await fetch("https://tlt4idowxd.execute-api.us-east-1.amazonaws.com/", {
+      method: "post",
+      body: JSON.stringify(results),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    $("#contact-form").replaceWith(
+      "<h2>Thanks for contacting us!</h2><h3>We will get back to you as soon as possible.</h3>"
+    );
+
+    console.log(results);
   });
   //@ts-ignore
   $("#type").selectmenu({
