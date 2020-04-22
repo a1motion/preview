@@ -1,6 +1,7 @@
 interface App {
   init(): Promise<void>;
   version: string;
+  __DEV__: boolean;
 }
 
 interface Window {

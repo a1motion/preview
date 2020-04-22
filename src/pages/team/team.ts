@@ -6,7 +6,7 @@ interface TeamMember {
 }
 
 $(() => {
-  fetch("/team.json")
+  fetch(App.__DEV__ ? "/team.json" : "//cdn.a1motion.com/preview/team.json")
     .then((res) => res.json())
     .then((data) => {
       const { team }: { team: TeamMember[] } = data;

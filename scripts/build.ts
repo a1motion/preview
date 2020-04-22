@@ -291,7 +291,7 @@ export async function app(unpublished: boolean, modern: boolean) {
    */
   const bundled = files
     .reduce((a, b) => `${a}\n${b}`, "")
-    .replace("%VERSION%", VERSION);
+    .replace(/\%VERSION\%/g, VERSION);
 
   /**
    * Transform the bundled javascript with babel

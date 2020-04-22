@@ -732,6 +732,8 @@ try {
 
 App.version = "%VERSION%";
 
+App.__DEV__ = "%VERSION%" === "%" + "VERSION" + "%";
+
 function domLoaded() {
   return (
     //@ts-ignore
