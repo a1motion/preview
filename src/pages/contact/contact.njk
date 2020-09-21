@@ -12,11 +12,11 @@
       <div class="contact-card shadow-lg">
         <form id="contact-form">
           <h3 class="title">Contact</h3>
-          {{ field('name', label="Full Name") }}
-          {{ field('email', label="Email", type="email") }}
+          {{ field('name', label="Full Name", required="true") }}
+          {{ field('email', label="Email", type="email", required="true") }}
           <div class="form-item">
             <div class="ui-selectmenu-wrapper">
-              <select name="type" id="type">
+              <select name="type" id="type" required>
                 <option value="inquiry">Inquiry</option>
                 <option value="quote">Request Quest</option>
                 <option value="service">Request Service</option>

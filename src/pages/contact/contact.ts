@@ -25,8 +25,10 @@ function checkForm() {
   if (!name || name.length === 0) {
     nameParent.addClass("has-error");
     nameErrorElement.text("Full name is required.");
+    nameElement.attr("aria-invalid", "true");
     hasError = true;
   } else {
+    nameElement.removeAttr("aria-invalid");
     nameParent.removeClass("has-error");
   }
 
@@ -53,6 +55,7 @@ function checkForm() {
   if (!email || email.length === 0) {
     emailParent.addClass("has-error");
     emailErrorElement.text("An email is required.");
+    emailElement.attr("aria-invalid", "true");
     hasError = true;
     /**
      * If the user didn't input a valid email, notify them
@@ -60,8 +63,10 @@ function checkForm() {
   } else if (!validateEmail(email)) {
     emailParent.addClass("has-error");
     emailErrorElement.text("An valid email is required.");
+    emailElement.attr("aria-invalid", "true");
     hasError = true;
   } else {
+    emailElement.removeAttr("aria-invalid");
     emailParent.removeClass("has-error");
   }
 
@@ -85,8 +90,10 @@ function checkForm() {
   if (!message || message.length === 0) {
     messageParent.addClass("has-error");
     messageErrorElement.text("An message is required.");
+    messageElement.attr("aria-invalid", "true");
     hasError = true;
   } else {
+    messageElement.removeAttr("aria-invalid");
     messageParent.removeClass("has-error");
   }
 

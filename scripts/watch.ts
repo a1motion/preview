@@ -169,9 +169,11 @@ const page = (file: string) =>
       pages.push(pageName);
     }
 
-    let data = {};
+    let data = {
+      page: pageName,
+    };
     if (await fileExists(path.join(pageDir, "data.json"))) {
-      data = require(path.join(pageDir, "data.json"));
+      data = Object.assign({}, data, require(path.join(pageDir, "data.json")));
     }
 
     let output = nunjuck.render(file, data);

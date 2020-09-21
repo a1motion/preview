@@ -400,9 +400,11 @@ async function pages(
   for (const file of files) {
     const { dir: pageDir, name: pageName } = path.parse(file);
     spinner.text = `[build] [pages] [${pageName}]`;
-    let data = {};
+    let data = {
+      page: pageName,
+    };
     if (await fileExists(path.join(pageDir, "data.json"))) {
-      data = require(path.join(pageDir, "data.json"));
+      data = Object.assign({}, data, require(path.join(pageDir, "data.json")));
     }
 
     let output = nunjuck.render(file, data);

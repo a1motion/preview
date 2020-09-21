@@ -211,9 +211,10 @@ p {
   display: flex;
   flex-direction: row;
   border-bottom: 1px solid #eeeeee;
-  padding: 8px 12px;
+  padding: 0 12px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
   justify-content: space-between;
+  height: 54px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -242,14 +243,20 @@ p {
   & .app-nav-link {
     display: flex;
     align-items: center;
-    height: 48px;
+    height: 54px;
     & a {
-      line-height: 48px;
+      line-height: 54px;
       text-decoration: none;
       color: $primary-color;
       font-weight: 600;
       &:hover {
         color: $secondary-color;
+      }
+    }
+    &.active {
+      border-bottom: 1px solid $primary-color;
+      &:hover {
+        border-color: $secondary-color;
       }
     }
   }

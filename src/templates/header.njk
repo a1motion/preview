@@ -8,18 +8,18 @@
   <nav class="app-nav">
     <ul>
       <li>
-        <div class="app-nav-link">
-          <a href="/contact">Contact</a>
+        <div class="app-nav-link{{' active' if page == 'contact'}}">
+          <a href="/contact" aria-selected="{{'true' if page == 'contact' else 'false'}}">Contact</a>
         </div>
       </li>
       <li>
-        <div class="app-nav-link">
-          <a href="/team">The Team</a>
+        <div class="app-nav-link{{' active' if page == 'team'}}">
+          <a href="/team" aria-selected="{{'true' if page == 'team' else 'false'}}">The Team</a>
         </div>
       </li>
       <li>
-        <div class="app-nav-link">
-          <a href="/work">Our Work</a>
+        <div class="app-nav-link{{' active' if page == 'work'}}">
+          <a href="/work" aria-selected="{{'true' if page == 'work' else 'false'}}">Our Work</a>
         </div>
       </li>
     </ul>
